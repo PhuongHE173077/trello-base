@@ -9,7 +9,6 @@ import Select from '@mui/material/Select';
 import {
   useColorScheme
 } from '@mui/material/styles';
-import React from 'react';
 export const ModalSelect = () => {
   const { mode, setMode } = useColorScheme();
 
@@ -19,8 +18,8 @@ export const ModalSelect = () => {
 
   return (
     <Box sx={{ minWidth: 120 }}>
-      <FormControl >
-        <InputLabel id="demo-simple-select-label">Model</InputLabel>
+      <FormControl sx={{ color: 'primary.main' }}>
+        <InputLabel id="demo-simple-select-label" sx={{ color: 'primary.main' }}>Model</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -28,6 +27,7 @@ export const ModalSelect = () => {
           size='small'
           label="Model"
           onChange={handleChange}
+          sx={{ color: 'primary.main' }}
         >
           <MenuItem value='light' >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>

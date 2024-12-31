@@ -1,7 +1,4 @@
 import { Container } from '@mui/material';
-import Box from '@mui/material/Box';
-import * as React from 'react';
-import { ModalSelect } from '../../components/ModeSelect';
 import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar';
 import { BoardContent } from './BoardContent';
