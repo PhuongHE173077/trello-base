@@ -1,27 +1,90 @@
-import { cyan, grey, orange, teal } from '@mui/material/colors';
+import { cyan, grey } from '@mui/material/colors';
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
-// Create a theme instance.
+const APP_BAR_HEIGHT = '58px';
+const BOARD_BAR_HEIGHT = '58px';
+const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGHT})`;
+
 const theme = extendTheme({
   trello: {
-    appBarHeight: '58px',
-    boardBarHeight: '58px'
+    appBarHeight: APP_BAR_HEIGHT,
+    boardBarHeight: BOARD_BAR_HEIGHT,
+    boardContentHeight: BOARD_CONTENT_HEIGHT
   },
   colorSchemes: {
     light: {
       palette: {
         primary: cyan,
-        secondary: orange,
+        secondary: {
+          main: '#FFFFFF'
+        },
       },
 
     },
     dark: {
       palette: {
-        primary: teal,
-        secondary: grey,
+        primary: grey,
+        secondary: {
+          main: '#111111'
+        }
+      },
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
       },
     },
 
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.primary.main,
+          fontSize: '0.875rem',
+          '.MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.primary.light
+          },
+          '&:hover': {
+            '.MuiOutlinedInput-notchedOutline': {
+              borderColor: theme.palette.primary.dark
+            }
+          },
+        }),
+      },
+    },
+
+    MuiInputLabel: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.primary.main,
+          fontSize: '0.875rem',
+        }),
+      }
+    },
+
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          '*::-webkit-scrollbar': {
+            width: "4px",
+            Height: "4px",
+          },
+          '*::-webkit-scrollbar-track': {
+            background: "#f1f1f1",
+          },
+          '*::-webkit-scrollbar-thumb': {
+            background: "#bdc3c7",
+            borderRadius: "8px",
+          },
+          '*::-webkit-scrollbar-thumb:hover': {
+            background: "#555",
+          },
+        }
+      }
+    }
   },
 });
 

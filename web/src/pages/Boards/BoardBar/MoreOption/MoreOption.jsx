@@ -2,7 +2,6 @@ import Cloud from '@mui/icons-material/Cloud';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import ContentCut from '@mui/icons-material/ContentCut';
 import ContentPaste from '@mui/icons-material/ContentPaste';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -11,9 +10,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-export const Workspaces = () => {
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+export default function MoreOption() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -24,19 +22,18 @@ export const Workspaces = () => {
   };
 
   return (
-    <Box>
+    <div>
       <Button
-        id="basic-button-workspace"
+        id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
       >
-        Workspaces
+        <MoreHorizIcon />
       </Button>
       <Menu
-        id="basic-menu-workspace"
+        id="basic-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
@@ -79,6 +76,6 @@ export const Workspaces = () => {
           <ListItemText>Web Clipboard</ListItemText>
         </MenuItem>
       </Menu>
-    </Box>
+    </div>
   );
 }

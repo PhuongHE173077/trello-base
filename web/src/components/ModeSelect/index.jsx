@@ -17,7 +17,7 @@ export const ModalSelect = () => {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ maxWidth: 120 }}>
       <FormControl sx={{ color: 'primary.main' }}>
         <InputLabel id="demo-simple-select-label" sx={{ color: 'primary.main' }}>Model</InputLabel>
         <Select
@@ -27,7 +27,10 @@ export const ModalSelect = () => {
           size='small'
           label="Model"
           onChange={handleChange}
-          sx={{ color: 'primary.main' }}
+          sx={{
+            color: 'primary.main',
+            ".MuiSvgIcon-root": { color: 'primary.main' }
+          }}
         >
           <MenuItem value='light' >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
