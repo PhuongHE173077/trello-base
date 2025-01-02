@@ -18,7 +18,9 @@ const MENU_STYLE = {
   cursor: 'pointer',
   border: "none",
 }
-export const BoardBar = () => {
+export const BoardBar = ({ mocData }) => {
+  console.log(mocData);
+
   return (
     <Box
       sx={{
@@ -27,11 +29,11 @@ export const BoardBar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         borderTop: '1px solid green',
-        backgroundColor: '#FF99CC',
+        backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#444444' : '#F0F8FF',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Typography variant='h6' sx={MENU_STYLE}>EDU_TRACK</Typography>
+        <Typography variant='h6' sx={MENU_STYLE}>{mocData?.title}</Typography>
 
         <Tooltip title="Click to star or un star this board. Starred boards show up at the top of your boards list.">
           <IconButton>

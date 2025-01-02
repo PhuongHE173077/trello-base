@@ -18,7 +18,7 @@ export const AppBar = () => {
     <Box
       sx={{
         height: (theme) => theme.trello.appBarHeight,
-        backgroundColor: 'secondary.main',
+        backgroundColor: 'linear-gradient(135deg, #2E1A47, #1A3E48)',
         display: 'flex',
         alignItems: 'center',
         width: '100%',
