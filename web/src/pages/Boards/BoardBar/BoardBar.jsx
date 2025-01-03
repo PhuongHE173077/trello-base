@@ -19,7 +19,7 @@ const MENU_STYLE = {
   border: "none",
 }
 export const BoardBar = ({ mocData }) => {
-  console.log(mocData);
+  // console.log(mocData);
 
   return (
     <Box
@@ -30,6 +30,7 @@ export const BoardBar = ({ mocData }) => {
         justifyContent: 'space-between',
         borderTop: '1px solid green',
         backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#444444' : '#F0F8FF',
+        overflowX: 'auto'
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
