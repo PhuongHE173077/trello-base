@@ -5,11 +5,12 @@ import { ListCard } from './ListCard/ListCard';
 import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Opacity } from '@mui/icons-material';
 
 export const Column = ({ column }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
-  const { attributes, listeners, setNodeRef, transform, transition, } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
   });
@@ -18,66 +19,71 @@ export const Column = ({ column }) => {
     touchAction: 'none',
     transform: CSS.Translate.toString(transform),
     transition,
+    height: '100%',
+    opacity: isDragging ? 0.5 : undefined,
+
   };
 
   return (
-
-    <Box
-      ref={setNodeRef}
-      style={dndKitColumnStyle} {...attributes} {...listeners}
-      sx={{
-        minWidth: '272px',
-        maxWidth: '272px',
-        ml: 1,
-        mt: 1,
-        height: 'fit-content',
-        bgcolor: (theme) => theme.palette.mode === 'dark' ? '#FFFFFF' : '#FFFFFF',
-        borderRadius: 2,
-        maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`,
-
-      }}>
-
-      {/* box column header */}
+    <div ref={setNodeRef}
+      style={dndKitColumnStyle} {...attributes} >
       <Box
+        {...listeners}
         sx={{
-          height: (theme) => theme.trello.columnHeaderHeight,
-          display: 'flex',
-          alignItems: 'center',
+          minWidth: '272px',
+          maxWidth: '272px',
           ml: 1,
-          justifyContent: 'space-between'
+          mt: 1,
+          height: 'fit-content',
+          bgcolor: (theme) => theme.palette.mode === 'dark' ? '#FFFFFF' : '#FFFFFF',
+          borderRadius: 2,
+          maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`,
+
         }}>
-        <Typography
+
+        {/* box column header */}
+        <Box
           sx={{
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            fontSize: "1rem"
-          }}
-        >{column?.title}</Typography>
-        <MoreOption />
-      </Box>
+            height: (theme) => theme.trello.columnHeaderHeight,
+            display: 'flex',
+            alignItems: 'center',
+            ml: 1,
+            justifyContent: 'space-between'
+          }}>
+          <Typography
+            sx={{
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: "1rem"
+            }}
+          >{column?.title}</Typography>
+          <MoreOption />
+        </Box>
 
-      {/* Box list card  */}
+        {/* Box list card  */}
 
 
-      <ListCard cards={cardOrder} />
+        <ListCard cards={cardOrder} />
 
 
-      <Box
-        sx={{
-          height: (theme) => theme.trello.columnFooterHeight,
-          p: 2
-        }}
-      >
-        <Button
-          startIcon={<AddCardIcon />}
+        <Box
           sx={{
-            color: 'primary.dark'
+            height: (theme) => theme.trello.columnFooterHeight,
+            p: 2
           }}
         >
-          Add a card
-        </Button>
-      </Box>
+          <Button
+            startIcon={<AddCardIcon />}
+            sx={{
+              color: 'primary.dark'
+            }}
+          >
+            Add a card
+          </Button>
+        </Box>
 
-    </Box>
+      </Box>
+    </div>
+
   )
 }
