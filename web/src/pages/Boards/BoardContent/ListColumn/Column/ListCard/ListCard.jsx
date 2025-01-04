@@ -14,6 +14,7 @@ export const ListCard = ({ cards }) => {
           gap: 1,
           p: '0 5px 5px 5px',
           m: '0 5px',
+          minHeight: '5px',
           overflowX: 'hidden',
           overflowY: 'auto',
           maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)} - ${theme.trello.columnHeaderHeight} - ${theme.trello.columnFooterHeight})`

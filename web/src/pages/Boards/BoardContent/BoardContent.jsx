@@ -15,7 +15,8 @@ import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { Column } from './ListColumn/Column/Column';
 import { TrelloCard } from './ListColumn/Column/ListCard/Card/Card';
 import { ListColumn } from './ListColumn/ListColumn';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
+import { generatePlaceholderCard } from '~/Utils/fomatter';
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -55,7 +56,7 @@ export const BoardContent = ({ board }) => {
   )
 
   const handleDragStart = (event) => {
-    console.log('drag start:', event);
+    // console.log('drag start:', event);
     setActiveDragId(event?.active?.id)
     setData(event?.active?.data?.current)
     setActiveDragType(event?.active?.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE?.CARD : ACTIVE_DRAG_ITEM_TYPE?.COLUMN)
@@ -131,6 +132,12 @@ export const BoardContent = ({ board }) => {
         //remove card from active column
         nextActiveColumn.cards = nextActiveColumn.cards.filter(c => c._id !== activeCardId)
 
+        // if cards is empty , i add one card in column because if the card array is empty then we don't drag and drop to this column 
+        if (isEmpty(nextActiveColumn.cards)) {
+
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
+
         //update cardOrderIds
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.filter(c => c._id)
       }
@@ -144,6 +151,8 @@ export const BoardContent = ({ board }) => {
         //update cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(c => c._id)
       }
+      console.log('nextColum:', nextColum);
+
       return nextColum
     })
   }
@@ -163,11 +172,10 @@ export const BoardContent = ({ board }) => {
       const activeColumn = findColumnByCardId(activeCardId)
       const overColumn = findColumnByCardId(overCardId)
 
-      console.log('activeCardId', oldColumnDrag);
-      console.log('overCardId', overColumn);
-
       //check active or over is null
       if (!oldColumnDrag || !overColumn) return
+
+      //transfer card from this column to that column
       if (oldColumnDrag._id !== overColumn._id) {
         moveCardBetweenDifferentColumn(
           overColumn,
@@ -178,12 +186,13 @@ export const BoardContent = ({ board }) => {
           activeCardId,
           activeCardData)
 
-      } else {
+      }
+      //transfer card in this column 
+      else {
 
         const oldIndex = oldColumnDrag.cards.findIndex(c => c._id === activeCardId)
         const newIndex = oldColumnDrag.cards.findIndex(c => c._id === overCardId)
         const swappedCards = arrayMove(oldColumnDrag?.cards, oldIndex, newIndex);
-        console.log('swappedCards', swappedCards);
 
         setOrderColumns(prev => {
 

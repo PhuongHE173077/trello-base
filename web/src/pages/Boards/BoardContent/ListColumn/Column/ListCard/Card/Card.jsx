@@ -1,13 +1,12 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import DescriptionIcon from '@mui/icons-material/Description';
-import EditIcon from '@mui/icons-material/Edit';
 import { Avatar, Box, Button, Tooltip, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 export const TrelloCard = ({ card }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -27,9 +26,13 @@ export const TrelloCard = ({ card }) => {
       ref={setNodeRef}
       style={dndKitCardStyle} {...attributes} {...listeners}
       sx={{
-        maxWidth: 345, overflow: 'unset',
+        maxWidth: 345,
+        overflow: 'unset',
         boxShadow: '0px 1px 1px rga(0, 0, 0, 0.2)',
-        position: 'relative',
+        opacity: card.FE_PlaceholderCard ? '0' : '1',
+        minWidth: card.FE_PlaceholderCard ? '280px' : 'unset',
+        pointerEvents: card.FE_PlaceholderCard ? 'none' : 'unset',
+        position: card.FE_PlaceholderCard ? 'fixed' : 'unset'
       }}>
 
       {card.cover ? (
