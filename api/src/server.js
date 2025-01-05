@@ -5,7 +5,8 @@ import { env } from './config/environment'
 import { CONNECT_DB } from './config/mongodb'
 import { APIs_V1 } from './routes/v1'
 import { errorHandlingMiddleware } from './middlewares/erroHandlingMiddlewares'
-
+import { corsOptions } from './config/cors'
+var cors = require('cors')
 
 const START_SERVER = () => {
   const app = express()
@@ -13,6 +14,7 @@ const START_SERVER = () => {
   const hostname = env.APP_HOST
   const port = env.APP_POST
 
+  app.use(cors(corsOptions))
 
   app.use(express.json())
 

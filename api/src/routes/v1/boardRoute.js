@@ -11,4 +11,7 @@ Router.route('/')
   })
   .post(boardValidation.createNewBoard, boardController.createNewBoard)
 
+Router.route('/:id')
+  .get(boardController.getDetail)
+
 export const boardRoutes = Router
