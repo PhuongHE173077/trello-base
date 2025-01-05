@@ -1,28 +1,41 @@
 
 
 import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
+import { env } from './config/environment'
+import { CONNECT_DB } from './config/mongodb'
+import { APIs_V1 } from './routes/v1'
+import { errorHandlingMiddleware } from './middlewares/erroHandlingMiddlewares'
 
-const app = express()
 
-const hostname = 'localhost'
-const port = 8017
+const START_SERVER = () => {
+  const app = express()
 
-app.get('/', (req, res) => {
-  // Test Absolute import mapOrder
-  console.log(mapOrder(
-    [{ id: 'id-1', name: 'One' },
-    { id: 'id-2', name: 'Two' },
-    { id: 'id-3', name: 'Three' },
-    { id: 'id-4', name: 'Four' },
-    { id: 'id-5', name: 'Five' }],
-    ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    'id'
-  ))
-  res.end('<h1>Hello World!</h1><hr>')
-})
+  const hostname = env.APP_HOST
+  const port = env.APP_POST
 
-app.listen(port, hostname, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Hello , I am running at ${hostname}:${port}/`)
-})
+
+  app.use(express.json())
+
+  app.use('/v1', APIs_V1)
+
+  //middleware erro (allways in last)
+  app.use(errorHandlingMiddleware)
+
+  app.listen(port, hostname, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Hello ${env.AUTHOR}, I am running at http://${hostname}:${port}/`)
+  })
+}
+
+CONNECT_DB()
+  .then(() =>
+    // eslint-disable-next-line no-console
+    console.log('Connected database successfully !'))
+  .then(() => START_SERVER())
+  .catch((error) => {
+    // eslint-disable-next-line no-console
+    console.log(error)
+    process.exit(0)
+  })
+
+
