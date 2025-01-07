@@ -28,7 +28,6 @@ const validateBeforeCreate = async (data) => {
 const createNewBoard = async (data) => {
   try {
     const validData = await validateBeforeCreate(data)
-
     return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
   } catch (error) {
     throw new Error(error)
@@ -70,10 +69,24 @@ const getDetail = async (id) => {
           }
         }
       ]).toArray()
-      return result[0] || {}
+      return result[0] || null
     } catch (error) {
       throw new Error(error)
     }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $push: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    return result.value
   } catch (error) {
     throw new Error(error)
   }
@@ -84,5 +97,6 @@ export const boardModal = {
   BOARD_COLECTION_SCHEMA,
   createNewBoard,
   findOneById,
-  getDetail
+  getDetail,
+  pushColumnOrderIds
 }

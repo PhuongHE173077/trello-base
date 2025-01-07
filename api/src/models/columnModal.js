@@ -1,3 +1,7 @@
+import { ObjectId, ReturnDocument } from "mongodb"
+import { GET_DB } from "~/config/mongodb"
+import { boardModal } from "./boardModel"
+
 const Joi = require("joi")
 const { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } = require("./validators")
 
@@ -16,7 +20,52 @@ const COLUMN_COLLECION_SCHEMA = Joi.object({
 
 })
 
+const validateBeforeCreate = async (data) => {
+  return await COLUMN_COLLECION_SCHEMA.validateAsync(data, { abortEarly: false })
+}
+
+const createNewColumn = async (data) => {
+  try {
+    const validData = await validateBeforeCreate(data)
+    const newObject = {
+      ...validData,
+      boardId: new ObjectId(validData.boardId)
+    }
+    return await GET_DB().collection(COLUMN_COLLECTION_NAME).insertOne(newObject)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const findOneById = async (id) => {
+  try {
+    return await GET_DB().collection(COLUMN_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const pushCardOrderIds = async (card) => {
+  const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+    {
+      _id: new ObjectId(card.columnId)
+    },
+    {
+      $push: { cardOrderIds: new ObjectId(card._id) }
+    },
+    {
+      returnDocument: 'after'
+    }
+  )
+  return result.value
+}
+
+
 export const columnModal = {
   COLUMN_COLLECTION_NAME,
-  COLUMN_COLLECION_SCHEMA
+  COLUMN_COLLECION_SCHEMA,
+  createNewColumn,
+  findOneById,
+  pushCardOrderIds
+
 }

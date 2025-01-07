@@ -1,11 +1,9 @@
-import AddCardIcon from '@mui/icons-material/AddCard';
-import { Box, Button, Typography } from '@mui/material';
-import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
-import { ListCard } from './ListCard/ListCard';
-import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Opacity } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
+import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
+import { mapOrder } from '~/Utils/sortArrayByOtherArray';
+import { ListCard } from './ListCard/ListCard';
 
 export const Column = ({ column }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
@@ -66,21 +64,6 @@ export const Column = ({ column }) => {
         <ListCard cards={cardOrder} />
 
 
-        <Box
-          sx={{
-            height: (theme) => theme.trello.columnFooterHeight,
-            p: 2
-          }}
-        >
-          <Button
-            startIcon={<AddCardIcon />}
-            sx={{
-              color: 'primary.dark'
-            }}
-          >
-            Add a card
-          </Button>
-        </Box>
 
       </Box>
     </div>
