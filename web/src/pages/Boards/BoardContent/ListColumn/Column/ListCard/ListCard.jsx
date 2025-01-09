@@ -9,18 +9,31 @@ import { TrelloCard } from './Card/Card';
 import { toast } from 'react-toastify';
 
 
-export const ListCard = ({ cards }) => {
+export const ListCard = ({ cards, createNewCard, columnId }) => {
   const [open, setOpen] = useState(false)
   const [titleCard, setTitleCard] = useState('')
 
   const toggleOpenForm = () => { setOpen(!open) }
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     if (!titleCard) {
       toast.error('Card title is empty !', {
         position: 'bottom-left'
       })
     }
+
+    const newCard = {
+      title: titleCard,
+      columnId: columnId
+    }
+
+    const req = await createNewCard(newCard)
+
+    if (req.statusCode) {
+      toast.error(req.message)
+    }
+    toggleOpenForm()
+    setTitleCard('')
   }
   return (
     <SortableContext items={cards?.map(c => c._id)} strategy={verticalListSortingStrategy}>
@@ -66,6 +79,7 @@ export const ListCard = ({ cards }) => {
               label='Card name'
               fullWidth
               variant="outlined"
+              onChange={e => setTitleCard(e.target.value)}
               sx={{
                 '& label': { color: "#6ab04c " },
                 '& label.Mui-focused': { color: '#6ab04c ' },

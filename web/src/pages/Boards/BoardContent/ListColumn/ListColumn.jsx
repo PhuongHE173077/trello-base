@@ -5,15 +5,25 @@ import { Box, Button, IconButton, TextField, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { Column } from './Column/Column';
 import { toast } from 'react-toastify';
-export const ListColumn = ({ column }) => {
+export const ListColumn = ({ column, createNewColumn, createNewCard }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const [titleNewColumn, setTitleNewColumn] = useState('')
   const toggleForm = () => { setOpenNewColumnForm(!openNewColumnForm) }
 
-  const addColumn = () => {
+  const addColumn = async () => {
     if (!titleNewColumn) {
       toast.error('NOT EMPTY')
       return
+    }
+
+    const newColumn = {
+      title: titleNewColumn
+    }
+
+
+    const req = await createNewColumn(newColumn)
+    if (req.statusCode) {
+      toast.error(req.message)
     }
     toggleForm()
     setTitleNewColumn('')
@@ -31,7 +41,7 @@ export const ListColumn = ({ column }) => {
           overflowY: 'hidden'
         }}>
         {column?.map((col, index) => (
-          <Column key={index} column={col} />
+          <Column key={index} column={col} createNewCard={createNewCard} />
         ))}
 
         {!openNewColumnForm ? (
@@ -71,6 +81,7 @@ export const ListColumn = ({ column }) => {
               label='Column name'
               size='small'
               variant="outlined"
+              onChange={e => setTitleNewColumn(e.target.value)}
               sx={{
                 '& label': { color: "#FFB347 " },
                 '& label.Mui-focused': { color: '#FFB347 ' },

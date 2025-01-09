@@ -23,7 +23,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-export const BoardContent = ({ board }) => {
+export const BoardContent = ({ board, createNewColumn, createNewCard }) => {
   const [orderColumns, setOrderColumns] = useState([])
 
   const [activeDragId, setActiveDragId] = useState(null);
@@ -151,7 +151,6 @@ export const BoardContent = ({ board }) => {
         //update cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(c => c._id)
       }
-      console.log('nextColum:', nextColum);
 
       return nextColum
     })
@@ -267,7 +266,7 @@ export const BoardContent = ({ board }) => {
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
         </DragOverlay>
-        <ListColumn column={orderColumns} />
+        <ListColumn column={orderColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} />
       </Box >
     </DndContext>
   )

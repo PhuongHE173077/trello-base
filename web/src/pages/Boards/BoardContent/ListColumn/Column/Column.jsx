@@ -5,7 +5,7 @@ import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
 import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { ListCard } from './ListCard/ListCard';
 
-export const Column = ({ column }) => {
+export const Column = ({ column, createNewCard }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -61,7 +61,7 @@ export const Column = ({ column }) => {
         {/* Box list card  */}
 
 
-        <ListCard cards={cardOrder} />
+        <ListCard cards={cardOrder} createNewCard={createNewCard} columnId={column._id} />
 
 
 
