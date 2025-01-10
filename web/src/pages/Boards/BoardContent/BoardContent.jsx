@@ -23,7 +23,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-export const BoardContent = ({ board, createNewColumn, createNewCard }) => {
+export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => {
   const [orderColumns, setOrderColumns] = useState([])
 
   const [activeDragId, setActiveDragId] = useState(null);
@@ -218,9 +218,7 @@ export const BoardContent = ({ board, createNewColumn, createNewCard }) => {
         //swap array by arrayMove function Of dnd kit (originArray, oldIndex, newIndex)
         const swappedColumns = arrayMove(orderColumns, oldIndex, newIndex);
 
-        //have array of ids to update database
-        const swappedColumnsIds = swappedColumns.map(c => c._id)
-        console.log(swappedColumnsIds);
+        moveColumn(swappedColumns)
 
         setOrderColumns(swappedColumns)
       }

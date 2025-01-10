@@ -1,6 +1,6 @@
 import { Container } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { createNewCardAPI, createNewColumAPI, fetchBoardDetailsAPI } from '~/apis';
+import { createNewCardAPI, createNewColumAPI, fetchBoardDetailsAPI, updateBoardDetailsAPI } from '~/apis';
 import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar/BoardBar';
 import { BoardContent } from './BoardContent/BoardContent';
@@ -59,11 +59,25 @@ export const Board = () => {
     return createdNewCard
   }
 
+  const moveColumn = async (swappedColumns) => {
+    const swappedColumnsIds = swappedColumns.map(c => c._id)
+    const newBoard = { ...board }
+    newBoard.columns = swappedColumns
+    newBoard.columnOrderIds = swappedColumnsIds
+    setBoard(newBoard)
+    const req = await updateBoardDetailsAPI(newBoard._id, { columnOrderIds: swappedColumnsIds })
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
       <BoardBar mocData={board} />
-      <BoardContent board={board} createNewColumn={createNewColumn} createNewCard={createNewCard} />
+      <BoardContent
+        board={board}
+        createNewColumn={createNewColumn}
+        createNewCard={createNewCard}
+        moveColumn={moveColumn}
+      />
     </Container>
   )
 }

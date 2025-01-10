@@ -17,9 +17,11 @@ const BOARD_COLECTION_SCHEMA = Joi.object({
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
-
+  updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
+
+const INVALID_UPDATE_FILEDS = ['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
   return await BOARD_COLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
@@ -86,10 +88,32 @@ const pushColumnOrderIds = async (column) => {
       { $push: { columnOrderIds: new ObjectId(column._id) } },
       { returnDocument: 'after' }
     )
+    //mongo db 6.0 return result 
     return result.value
   } catch (error) {
     throw new Error(error)
   }
+}
+
+const update = async (boardId, updatedData) => {
+  try {
+    Object.keys(updatedData).forEach((fieldName) => {
+      if (INVALID_UPDATE_FILEDS.includes(fieldName)) {
+        delete updatedData[fieldName]
+      }
+    })
+    console.log('updated data', updatedData);
+
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(boardId) },
+      { $set: updatedData },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+
 }
 
 export const boardModal = {
@@ -98,5 +122,6 @@ export const boardModal = {
   createNewBoard,
   findOneById,
   getDetail,
-  pushColumnOrderIds
+  pushColumnOrderIds,
+  update
 }
