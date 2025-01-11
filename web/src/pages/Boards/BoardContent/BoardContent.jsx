@@ -29,7 +29,8 @@ export const BoardContent = ({
   createNewCard,
   moveColumn,
   moveCardInSameColumn,
-  moveCardDifferentColumn
+  moveCardDifferentColumn,
+  handleDeleteColumn
 }) => {
   const [orderColumns, setOrderColumns] = useState([])
 
@@ -289,7 +290,7 @@ export const BoardContent = ({
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
         </DragOverlay>
-        <ListColumn column={orderColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} />
+        <ListColumn column={orderColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} handleDeleteColumn={handleDeleteColumn} />
       </Box >
     </DndContext>
   )

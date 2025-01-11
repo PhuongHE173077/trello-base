@@ -5,7 +5,7 @@ import { Box, Button, IconButton, TextField, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { Column } from './Column/Column';
 import { toast } from 'react-toastify';
-export const ListColumn = ({ column, createNewColumn, createNewCard }) => {
+export const ListColumn = ({ column, createNewColumn, createNewCard, handleDeleteColumn }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const [titleNewColumn, setTitleNewColumn] = useState('')
   const toggleForm = () => { setOpenNewColumnForm(!openNewColumnForm) }
@@ -41,7 +41,7 @@ export const ListColumn = ({ column, createNewColumn, createNewCard }) => {
           overflowY: 'hidden'
         }}>
         {column?.map((col, index) => (
-          <Column key={index} column={col} createNewCard={createNewCard} />
+          <Column key={index} column={col} createNewCard={createNewCard} handleDeleteColumn={handleDeleteColumn} />
         ))}
 
         {!openNewColumnForm ? (

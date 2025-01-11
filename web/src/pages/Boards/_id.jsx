@@ -1,11 +1,12 @@
 import { Container } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { createNewCardAPI, createNewColumAPI, fetchBoardDetailsAPI, moveCardToDifferentColumnAPI, updateBoardDetailsAPI, updateColumDetalsAPI } from '~/apis';
+import { createNewCardAPI, createNewColumAPI, deleteColumDetalsAPI, fetchBoardDetailsAPI, moveCardToDifferentColumnAPI, updateBoardDetailsAPI, updateColumDetalsAPI } from '~/apis';
 import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar/BoardBar';
 import { BoardContent } from './BoardContent/BoardContent';
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 import { generatePlaceholderCard } from '~/Utils/fomatter';
+import Swal from 'sweetalert2';
 export const Board = () => {
   const [board, setBoard] = useState(null)
 
@@ -91,6 +92,35 @@ export const Board = () => {
 
   }
 
+  const handleDeleteColumn = (columnId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `This action delete forever colum and card ! `,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        //
+        const newBoard = cloneDeep(board)
+        newBoard.columns = newBoard.columns.filter(c => c._id != columnId)
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c != columnId)
+        setBoard(newBoard)
+        //
+        await deleteColumDetalsAPI(columnId).then(() => {
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success"
+          });
+
+        })
+      }
+    });
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
@@ -102,6 +132,7 @@ export const Board = () => {
         moveColumn={moveColumn}
         moveCardInSameColumn={moveCardInSameColumn}
         moveCardDifferentColumn={moveCardDifferentColumn}
+        handleDeleteColumn={handleDeleteColumn}
       />
     </Container>
   )

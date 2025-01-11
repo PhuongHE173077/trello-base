@@ -5,7 +5,7 @@ import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
 import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { ListCard } from './ListCard/ListCard';
 
-export const Column = ({ column, createNewCard }) => {
+export const Column = ({ column, createNewCard, handleDeleteColumn }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -21,6 +21,8 @@ export const Column = ({ column, createNewCard }) => {
     opacity: isDragging ? 0.5 : undefined,
 
   };
+
+
 
   return (
     <div ref={setNodeRef}
@@ -55,7 +57,8 @@ export const Column = ({ column, createNewCard }) => {
               fontSize: "1rem"
             }}
           >{column?.title}</Typography>
-          <MoreOption />
+
+          <MoreOption handleDeleteColumn={handleDeleteColumn} column={column} />
         </Box>
 
         {/* Box list card  */}

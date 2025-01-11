@@ -118,6 +118,20 @@ const update = async (boardId, updatedData) => {
 
 }
 
+const pullOrderColummIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $pull: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    //mongo db 6.0 return result 
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const boardModal = {
   BOARD_COLLECTION_NAME,
   BOARD_COLECTION_SCHEMA,
@@ -125,5 +139,6 @@ export const boardModal = {
   findOneById,
   getDetail,
   pushColumnOrderIds,
-  update
+  update,
+  pullOrderColummIds
 }

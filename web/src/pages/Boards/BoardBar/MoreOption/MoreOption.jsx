@@ -11,7 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-export default function MoreOption() {
+export default function MoreOption({ handleDeleteColumn, column }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -41,37 +41,55 @@ export default function MoreOption() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem>
+        <MenuItem
+          sx={{
+            '&:hover': {
+              color: 'primary.dark',
+              '& .add-icon': { color: 'primary.dark' }
+            }
+          }}
+
+          onClick={() => {
+            handleClose()
+            handleDeleteColumn(column._id)
+          }}
+
+        >
           <ListItemIcon>
-            <ContentCut fontSize="small" />
+            <ContentCut fontSize="small" className='add-icon' />
           </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘X
-          </Typography>
+          <ListItemText>Delete</ListItemText>
+
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+
+          sx={{
+            '&:hover': {
+              color: 'primary.dark',
+              '& .add-icon': { color: 'primary.dark' }
+            }
+          }}
+        >
           <ListItemIcon>
-            <ContentCopy fontSize="small" />
+            <ContentCopy fontSize="small" className='add-icon' />
           </ListItemIcon>
           <ListItemText>Copy</ListItemText>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘C
+
           </Typography>
         </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentPaste fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘V
-          </Typography>
-        </MenuItem>
+
         <Divider />
-        <MenuItem>
+        <MenuItem
+
+          sx={{
+            '&:hover': {
+              color: 'primary.dark',
+              '& .add-icon': { color: 'primary.dark' }
+            }
+          }}>
           <ListItemIcon>
-            <Cloud fontSize="small" />
+            <Cloud fontSize="small" className='add-icon' />
           </ListItemIcon>
           <ListItemText>Web Clipboard</ListItemText>
         </MenuItem>
