@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes"
 import Joi from "joi"
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~/models/validators"
 import ApiError from "~/utils/ApiError"
 import { BOARD_TYPES } from "~/utils/constants"
 
@@ -39,7 +40,31 @@ const update = async (req, res, next) => {
   }
 }
 
+const moveCardToDifferentColumn = async (req, res, next) => {
+  const schema = Joi.object({
+    currentCardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
+    prevColumnId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
+    prevCardOrderIds: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    ),
+    nextColumId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
+    nextCardOrderIds: Joi.array().required().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    )
+  })
+
+  try {
+    await schema.validateAsync(req.body, {
+      abortEarly: false
+    })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message))
+  }
+}
+
 export const boardValidation = {
   createNewBoard,
-  update
+  update,
+  moveCardToDifferentColumn
 }

@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes"
+import { ObjectId } from "mongodb"
 import { boardModal } from "~/models/boardModel"
 import { columnModal } from "~/models/columnModal"
 import ApiError from "~/utils/ApiError"
@@ -25,7 +26,21 @@ const createNewColumn = async (reqBody) => {
   }
 }
 
+const update = async (columnId, reqBody) => {
+  try {
+
+    const updatedColumn = {
+      ...reqBody,
+      updatedAt: Date.now
+    }
+
+    return await columnModal.update(columnId, updatedColumn)
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+  }
+}
 
 export const columnService = {
-  createNewColumn
+  createNewColumn,
+  update
 }

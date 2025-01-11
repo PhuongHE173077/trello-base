@@ -1,6 +1,6 @@
 import { Container } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { createNewCardAPI, createNewColumAPI, fetchBoardDetailsAPI, updateBoardDetailsAPI } from '~/apis';
+import { createNewCardAPI, createNewColumAPI, fetchBoardDetailsAPI, moveCardToDifferentColumnAPI, updateBoardDetailsAPI, updateColumDetalsAPI } from '~/apis';
 import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar/BoardBar';
 import { BoardContent } from './BoardContent/BoardContent';
@@ -53,7 +53,9 @@ export const Board = () => {
       const columnUpdate = newBoard.columns.find(c => c._id.toString() == createdNewCard.columnId)
 
       columnUpdate.cards.push(createdNewCard)
-      columnUpdate.cardOrderIds.push(createdNewCard.id)
+      console.log(columnUpdate);
+
+      columnUpdate.cardOrderIds.push(createdNewCard._id)
       setBoard(newBoard)
     }
     return createdNewCard
@@ -62,10 +64,31 @@ export const Board = () => {
   const moveColumn = async (swappedColumns) => {
     const swappedColumnsIds = swappedColumns.map(c => c._id)
     const newBoard = { ...board }
-    newBoard.columns = swappedColumns
-    newBoard.columnOrderIds = swappedColumnsIds
-    setBoard(newBoard)
-    const req = await updateBoardDetailsAPI(newBoard._id, { columnOrderIds: swappedColumnsIds })
+
+    await updateBoardDetailsAPI(newBoard._id, { columnOrderIds: swappedColumnsIds })
+  }
+
+  const moveCardInSameColumn = async (swappedCards, columnId) => {
+    const arrayCardIds = swappedCards.map(c => c._id)
+
+    await updateColumDetalsAPI(columnId, { cardOrderIds: arrayCardIds })
+  }
+
+  const moveCardDifferentColumn = async (currentCardId, prevColumnId, nextColumId, dndOrderColumn) => {
+
+    let prevCardOrderIds = dndOrderColumn.find(c => c._id === prevColumnId).cardOrderIds
+    let nextCardOrderIds = dndOrderColumn.find(c => c._id === nextColumId).cardOrderIds
+    // fast log mess :  ctrl shift 2
+    if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
+    nextCardOrderIds = nextCardOrderIds.filter(c => !c.includes('placeholder-card'))
+    await moveCardToDifferentColumnAPI({
+      currentCardId,
+      prevColumnId,
+      prevCardOrderIds,
+      nextColumId,
+      nextCardOrderIds,
+    })
+
   }
 
   return (
@@ -77,6 +100,8 @@ export const Board = () => {
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumn={moveColumn}
+        moveCardInSameColumn={moveCardInSameColumn}
+        moveCardDifferentColumn={moveCardDifferentColumn}
       />
     </Container>
   )

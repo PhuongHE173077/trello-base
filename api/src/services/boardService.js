@@ -1,6 +1,8 @@
 import { StatusCodes } from "http-status-codes"
 import { cloneDeep } from "lodash"
 import { boardModal } from "~/models/boardModel"
+import { cardModal } from "~/models/cardModal"
+import { columnModal } from "~/models/columnModal"
 import ApiError from "~/utils/ApiError"
 import { slugify } from "~/utils/slugify"
 
@@ -56,8 +58,27 @@ const update = async (boardId, data) => {
 
 }
 
+const moveCardToDifferentColumn = async (data) => {
+  try {
+    //
+
+    console.log(data)
+
+    await columnModal.update(data.prevColumnId, { cardOrderIds: data.prevCardOrderIds })
+    await columnModal.update(data.nextColumId, { cardOrderIds: data.nextCardOrderIds })
+
+    await cardModal.update(data.currentCardId, { columnId: data.nextColumId })
+
+    return { updatedResult: 'Succesfully ' }
+  } catch (error) {
+    throw new Error(error)
+  }
+
+}
+
 export const boardService = {
   createNewBoard,
   getDetail,
-  update
+  update,
+  moveCardToDifferentColumn
 }

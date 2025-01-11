@@ -23,7 +23,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn }) => {
+export const BoardContent = ({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumn,
+  moveCardInSameColumn,
+  moveCardDifferentColumn
+}) => {
   const [orderColumns, setOrderColumns] = useState([])
 
   const [activeDragId, setActiveDragId] = useState(null);
@@ -93,7 +100,9 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
         active,
         activeColumn,
         activeCardId,
-        activeCardData)
+        activeCardData,
+        'handleDragOver'
+      )
     }
 
   }
@@ -105,7 +114,8 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
     active,
     activeColumn,
     activeCardId,
-    activeCardData
+    activeCardData,
+    functionType
   ) => {
     setOrderColumns(prevColumns => {
       const overIndex = overColumn.cards.findIndex(c => c._id === overCardId)
@@ -137,9 +147,13 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
 
           nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
         }
+        console.log('nextActiveColumn', nextActiveColumn.cards);
+
 
         //update cardOrderIds
-        nextActiveColumn.cardOrderIds = nextActiveColumn.cards.filter(c => c._id)
+        nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(c => c._id)
+
+
       }
       if (nextOverColumn) {
         //if card exit in column ,they will remove card from column
@@ -150,6 +164,10 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
 
         //update cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(c => c._id)
+      }
+
+      if (functionType === 'handleDragEnd') {
+        moveCardDifferentColumn(activeCardId, oldColumnDrag._id, overColumn._id, nextColum)
       }
 
       return nextColum
@@ -176,6 +194,8 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
 
       //transfer card from this column to that column
       if (oldColumnDrag._id !== overColumn._id) {
+
+        //common function handle transfer card from this column to that column
         moveCardBetweenDifferentColumn(
           overColumn,
           overCardId,
@@ -183,7 +203,9 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
           active,
           activeColumn,
           activeCardId,
-          activeCardData)
+          activeCardData,
+          'handleDragEnd'
+        )
 
       }
       //transfer card in this column 
@@ -205,6 +227,8 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
           return nextColumn
         })
 
+        moveCardInSameColumn(swappedCards, oldColumnDrag._id)
+
       }
     }
 
@@ -218,9 +242,10 @@ export const BoardContent = ({ board, createNewColumn, createNewCard, moveColumn
         //swap array by arrayMove function Of dnd kit (originArray, oldIndex, newIndex)
         const swappedColumns = arrayMove(orderColumns, oldIndex, newIndex);
 
+        setOrderColumns(swappedColumns)
+
         moveColumn(swappedColumns)
 
-        setOrderColumns(swappedColumns)
       }
     }
 

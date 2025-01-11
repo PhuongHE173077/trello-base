@@ -44,9 +44,26 @@ const findOneById = async (id) => {
   }
 }
 
+const update = async (cardId, updatedData) => {
+  try {
+
+    if (updatedData.columnId) updatedData.columnId = new ObjectId(updatedData.columnId)
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      { $set: updatedData },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+
+}
+
 export const cardModal = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
   createNewCard,
-  findOneById
+  findOneById,
+  update
 }

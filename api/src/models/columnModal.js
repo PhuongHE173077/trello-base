@@ -60,12 +60,29 @@ const pushCardOrderIds = async (card) => {
   return result.value
 }
 
+const update = async (columnId, updatedData) => {
+  try {
+    console.log('updatedData', updatedData)
+    if (updatedData.cardOrderIds.length > 0) {
+      updatedData.cardOrderIds = updatedData.cardOrderIds.map(id => new ObjectId(id))
+    }
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(columnId) },
+      { $set: updatedData },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
 
+}
 export const columnModal = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECION_SCHEMA,
   createNewColumn,
   findOneById,
-  pushCardOrderIds
+  pushCardOrderIds,
+  update
 
 }
