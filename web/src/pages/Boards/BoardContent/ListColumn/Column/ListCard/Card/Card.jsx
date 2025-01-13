@@ -92,7 +92,7 @@ export const TrelloCard = ({ card }) => {
       )}
 
 
-      <Box sx={{
+      {/* <Box sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -102,7 +102,7 @@ export const TrelloCard = ({ card }) => {
         >
           <Avatar sx={{ width: 24, height: 24 }} src='https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-1-1.jpg '></Avatar>
         </Tooltip>
-      </Box>
+      </Box> */}
     </Card>
   )
 }

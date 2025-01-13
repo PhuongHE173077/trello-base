@@ -7,13 +7,21 @@ import CardContent from '@mui/material/CardContent';
 import { useState } from 'react';
 import { TrelloCard } from './Card/Card';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
+import { cloneDeep } from 'lodash';
+import { createNewCardAPI } from '~/apis';
 
 
-export const ListCard = ({ cards, createNewCard, columnId }) => {
+export const ListCard = ({ cards, columnId }) => {
   const [open, setOpen] = useState(false)
   const [titleCard, setTitleCard] = useState('')
 
   const toggleOpenForm = () => { setOpen(!open) }
+
+  const board = useSelector(selectCurrentActiveBoard)
+
+  const dispath = useDispatch()
 
   const handleAddCard = async () => {
     if (!titleCard) {
@@ -27,10 +35,24 @@ export const ListCard = ({ cards, createNewCard, columnId }) => {
       columnId: columnId
     }
 
-    const req = await createNewCard(newCard)
+    const createdNewCard = await createNewCardAPI({
+      ...newCard,
+      boardId: board._id
+    })
+    if (!createdNewCard.statusCode) {
+      const newBoard = cloneDeep(board)
 
-    if (req.statusCode) {
-      toast.error(req.message)
+      const columnUpdate = newBoard.columns.find(c => c._id.toString() == createdNewCard.columnId)
+
+      columnUpdate.cards.push(createdNewCard)
+
+      columnUpdate.cardOrderIds.push(createdNewCard._id)
+      dispath(updateCurrentActiveBoard(newBoard))
+
+    }
+
+    if (createdNewCard.statusCode) {
+      toast.error(createdNewCard.message)
     }
     toggleOpenForm()
     setTitleCard('')

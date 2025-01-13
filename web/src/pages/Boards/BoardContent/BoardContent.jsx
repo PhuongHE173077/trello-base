@@ -11,12 +11,12 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { Column } from './ListColumn/Column/Column';
 import { TrelloCard } from './ListColumn/Column/ListCard/Card/Card';
 import { ListColumn } from './ListColumn/ListColumn';
 import { cloneDeep, isEmpty } from 'lodash';
 import { generatePlaceholderCard } from '~/Utils/fomatter';
+import { mapOrder } from '~/Utils/sortArrayByotherArray';
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -25,12 +25,10 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 export const BoardContent = ({
   board,
-  createNewColumn,
-  createNewCard,
   moveColumn,
   moveCardInSameColumn,
-  moveCardDifferentColumn,
-  handleDeleteColumn
+  moveCardDifferentColumn
+
 }) => {
   const [orderColumns, setOrderColumns] = useState([])
 
@@ -290,7 +288,7 @@ export const BoardContent = ({
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
           {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
         </DragOverlay>
-        <ListColumn column={orderColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} handleDeleteColumn={handleDeleteColumn} />
+        <ListColumn column={orderColumns} />
       </Box >
     </DndContext>
   )

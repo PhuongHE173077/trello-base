@@ -2,10 +2,10 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Box, Typography } from '@mui/material';
 import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
-import { mapOrder } from '~/Utils/sortArrayByOtherArray';
 import { ListCard } from './ListCard/ListCard';
+import { mapOrder } from '~/Utils/sortArrayByotherArray';
 
-export const Column = ({ column, createNewCard, handleDeleteColumn }) => {
+export const Column = ({ column }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -21,6 +21,7 @@ export const Column = ({ column, createNewCard, handleDeleteColumn }) => {
     opacity: isDragging ? 0.5 : undefined,
 
   };
+
 
 
 
@@ -58,13 +59,13 @@ export const Column = ({ column, createNewCard, handleDeleteColumn }) => {
             }}
           >{column?.title}</Typography>
 
-          <MoreOption handleDeleteColumn={handleDeleteColumn} column={column} />
+          <MoreOption column={column} />
         </Box>
 
         {/* Box list card  */}
 
 
-        <ListCard cards={cardOrder} createNewCard={createNewCard} columnId={column._id} />
+        <ListCard cards={cardOrder} columnId={column._id} />
 
 
 
