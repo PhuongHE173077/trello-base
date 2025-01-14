@@ -2,6 +2,7 @@ import { Container } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { moveCardToDifferentColumnAPI, updateBoardDetailsAPI, updateColumDetalsAPI } from '~/apis';
 import {
   fetchBoardDetailsAPI,
@@ -17,11 +18,13 @@ export const Board = () => {
 
   const board = useSelector(selectCurrentActiveBoard)
 
-  const boardId = '677aa7dfcc84b47c8bcc93ac'
+  const { boardId } = useParams()
+
+  // '677aa7dfcc84b47c8bcc93ac'
   useEffect(() => {
 
     dispath(fetchBoardDetailsAPI(boardId))
-  }, [dispath])
+  }, [dispath, boardId])
 
 
   const moveColumn = async (swappedColumns) => {
@@ -67,6 +70,7 @@ export const Board = () => {
 
 
   return (
+
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
       <BoardBar mocData={board} />
@@ -78,5 +82,6 @@ export const Board = () => {
 
       />
     </Container>
+
   )
 }

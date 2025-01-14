@@ -4,7 +4,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, IconButton, TextField, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { Column } from './Column/Column';
-import { toast } from 'react-toastify';
 import { cloneDeep } from 'lodash';
 import { generatePlaceholderCard } from '~/Utils/fomatter';
 import { useDispatch, useSelector } from 'react-redux';
