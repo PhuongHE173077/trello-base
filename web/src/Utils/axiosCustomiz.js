@@ -1,4 +1,6 @@
 import axios from "axios";
+import { toast } from 'react-toastify';
+import { interceptorLoadingElements } from "./fomatter";
 
 const instance = axios.create({
     baseURL: 'http://localhost:8017/',
@@ -15,6 +17,8 @@ instance.interceptors.request.use(function (config) {
     // const access_token = store?.getState()?.account?.account?.access_token;
     // config.headers["Authorization"] = "Bearer " + access_token;
 
+    interceptorLoadingElements(true)
+
     return config;
 }, function (error) {
     return Promise.reject(error);
@@ -22,11 +26,18 @@ instance.interceptors.request.use(function (config) {
 //handle middleware errors response
 
 instance.interceptors.response.use(function (response) {
+    interceptorLoadingElements(false)
+
     return response && response.data ? response.data : response;;
 }, function (error) {
-    console.log("🚀 ~ error:", error)
 
-    return error && error.response && error.response.data ? error.response.data : Promise.reject(error);
+    interceptorLoadingElements(false)
+
+    if (error?.response?.status !== 401) {
+        toast.error(error?.response?.data?.message)
+    }
+
+    return Promise.reject(error);
 });
 
 export default instance;

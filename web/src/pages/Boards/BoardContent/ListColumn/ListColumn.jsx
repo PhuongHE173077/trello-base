@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, IconButton, TextField, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { Column } from './Column/Column';
+import { toast } from 'react-toastify';
 import { cloneDeep } from 'lodash';
 import { generatePlaceholderCard } from '~/Utils/fomatter';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,10 +46,6 @@ export const ListColumn = ({ column }) => {
     }
 
 
-
-    if (createdNewColumn.statusCode) {
-      toast.error(createdNewColumn.message)
-    }
     toggleForm()
     setTitleNewColumn('')
   }
@@ -116,7 +113,7 @@ export const ListColumn = ({ column }) => {
                 }
               }} />
             <Box sx={{ display: 'flex', alignItems: 'center' }} mt={'2px'} ml={'2px'}>
-              <Button variant='contained' size='small' onClick={addColumn}>
+              <Button variant='contained' size='small' className='interceptor-loading' onClick={addColumn}>
                 Add Columns
               </Button>
               <Tooltip title='close add columns' onClick={toggleForm}>

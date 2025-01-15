@@ -50,10 +50,6 @@ export const ListCard = ({ cards, columnId }) => {
       dispath(updateCurrentActiveBoard(newBoard))
 
     }
-
-    if (createdNewCard.statusCode) {
-      toast.error(createdNewCard.message)
-    }
     toggleOpenForm()
     setTitleCard('')
   }
@@ -120,6 +116,7 @@ export const ListCard = ({ cards, columnId }) => {
                   '&:hover ': { bgcolor: "#c7ecee" },
 
                 }}
+                className='interceptor-loading'
                 onClick={handleAddCard}
                 variant='contained'
               >
