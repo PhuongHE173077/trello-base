@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid';
 import { pickUser } from "~/utils/slugify";
 import { sendEmail } from "~/utils/sendMail";
+import { WEBSITE_DOMAIN } from "~/utils/constants";
+import { verifyForm } from "~/utils/fommat";
 const createNew = async (req, res, next) => {
   try {
     //check email exits
@@ -31,7 +33,10 @@ const createNew = async (req, res, next) => {
     const getNewuser = await userModal.findOneById(createUser.insertedId)
 
     //sent email for user to verify
-    await sendEmail('Trello APP', getNewuser.email, 'send mail', 'xin chao')
+
+    const linkVerify = `${WEBSITE_DOMAIN}/acount/verify?email?=${req.body.email}&token=${getNewuser.verifyToken}`
+
+    await sendEmail('Trello APP', req.body.email, 'Verify Email', verifyForm('Trello', linkVerify))
 
     //return data for controller
     return pickUser(getNewuser)
