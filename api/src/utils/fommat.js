@@ -9,7 +9,7 @@ export const verifyForm = (webName, webUrl) => {
   <p style="font-size: 14px; color: #333; margin-bottom: 20px;">
     Please click here to confirm that the registration email is yours. :
   </p>
-  <a href=${webUrl} style="display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold;">Reset your password</a>
+  <a href=${webUrl} style="display: inline-block; background-color: #48dbfb; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold;">Verify account</a>
   <p style="font-size: 12px; color: #666; margin-top: 20px;">
     If you don’t use this link within 3 hours, it will expire. 
   </p>

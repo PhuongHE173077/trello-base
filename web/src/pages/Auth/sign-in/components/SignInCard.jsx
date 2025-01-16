@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -17,6 +18,7 @@ import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, 
 import { ReactComponent as TrelloIcon } from '~/assets/Trello.svg';
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
 import { GoogleIcon } from "../icons/CustomIcon";
+import { useSearchParams } from "react-router-dom";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -36,7 +38,10 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const Login = () => {
+  let [searchParams] = useSearchParams()
 
+  const registerEmail = searchParams.get('registerEmail')
+  const verifyEmail = searchParams.get('verifyEmail')
 
   const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -59,6 +64,17 @@ const Login = () => {
 
       <form style={{ width: "100%" }} onSubmit={handleSubmit(submitLogin)}>
         <Stack spacing={2}>
+          {registerEmail &&
+            <Alert severity="info">
+              There are an mail send to <Typography sx={{ fontWeight: "bold", '&:hover': { color: '#0abde3' } }} component='span' style={{ cursor: 'pointer' }}>{registerEmail}</Typography>. Please verify your email.
+            </Alert>
+          }
+          {verifyEmail &&
+            <Alert severity="success">
+              Your mail <Typography sx={{ fontWeight: "bold", '&:hover': { color: '#0abde3' } }} component='span' style={{ cursor: 'pointer' }}>{verifyEmail} </Typography>has been verified. Now you can login to service.
+            </Alert>
+          }
+
           <Box>
             <TextField
               label="Email"

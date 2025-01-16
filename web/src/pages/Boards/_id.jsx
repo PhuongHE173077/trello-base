@@ -12,6 +12,7 @@ import {
 import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar/BoardBar';
 import { BoardContent } from './BoardContent/BoardContent';
+import { PageLoading } from '~/components/Loading/PageLoading';
 export const Board = () => {
 
   const dispath = useDispatch()
@@ -68,6 +69,9 @@ export const Board = () => {
 
   }
 
+  if (!board) {
+    return <PageLoading caption='Loading ...' />
+  }
 
   return (
 

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import axios from "~/Utils/axiosCustomiz";
 
 //Board API 
@@ -31,3 +32,16 @@ export const createNewCardAPI = async (cardData) => {
   return await axios.post(`v1/cards`, cardData)
 }
 
+
+//User API
+export const registerUserAPI = async (userData) => {
+  const res = await axios.post(`v1/users/register`, userData)
+  toast.success('Account created successfully!, Please check and verify your account before login.')
+  return res
+}
+
+export const verifyUserAPI = async (data) => {
+  const res = await axios.post(`v1/users/verify`, data)
+  toast.success('Account verify successfully!, Now you can login to enjoy our services!')
+  return res
+}

@@ -34,7 +34,7 @@ const createNew = async (req, res, next) => {
 
     //sent email for user to verify
 
-    const linkVerify = `${WEBSITE_DOMAIN}/acount/verify?email?=${req.body.email}&token=${getNewuser.verifyToken}`
+    const linkVerify = `${WEBSITE_DOMAIN}/acount/verify?email=${req.body.email}&token=${getNewuser.verifyToken}`
 
     await sendEmail('Trello APP', req.body.email, 'Verify Email', verifyForm('Trello', linkVerify))
 

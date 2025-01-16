@@ -2,20 +2,21 @@ import { SvgIcon } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { registerUserAPI } from '~/apis';
 import { ReactComponent as TrelloIcon } from '~/assets/Trello.svg';
 import { GoogleIcon } from './components/CustomIcons';
-import { Link } from 'react-router-dom';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -65,13 +66,15 @@ export default function SignUp(props) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [passwordCfError, setPasswordCfError] = React.useState(false);
+  const [passwordCfErrorMessage, setPasswordCfErrorMessage] = React.useState('');
+
+  const { register, handleSubmit } = useForm()
 
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
-    const name = document.getElementById('name');
+    const password_cf = document.getElementById('password_cf');
 
     let isValid = true;
 
@@ -84,39 +87,42 @@ export default function SignUp(props) {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password.value || !/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d\W]{8,256}$/.test(password.value)) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage('Password must include at least 1 letter, a number, and at least 8 characters.');
       isValid = false;
     } else {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
+    if (password.value !== password_cf.value) {
+      setPasswordCfError(true);
+      setPasswordCfErrorMessage('Passwords do not match.');
       isValid = false;
     } else {
-      setNameError(false);
-      setNameErrorMessage('');
+      setPasswordCfError(false);
+      setPasswordCfErrorMessage('');
     }
+
 
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const navigate = useNavigate()
+
+  const handleSubmit_2 = (data) => {
+    if (emailError || passwordError || passwordCfError) return
+    const { email, password } = data
+
+    toast.promise(
+      registerUserAPI({ email, password }),
+      { pending: 'Registation in process ...' }
+    ).then(user => {
+      navigate(`/Login?registerEmail=${user.email}`)
+    })
+
+
   };
 
   return (
@@ -138,24 +144,9 @@ export default function SignUp(props) {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(handleSubmit_2)}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
-              <TextField
-                autoComplete="name"
-                name="name"
-                required
-                fullWidth
-                id="name"
-                placeholder="Jon Snow"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
-
-              />
-            </FormControl>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
@@ -169,7 +160,7 @@ export default function SignUp(props) {
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
-
+                {...register('email')}
               />
             </FormControl>
             <FormControl>
@@ -186,13 +177,27 @@ export default function SignUp(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
-
+                {...register('password')}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
+
+            <FormControl>
+              <FormLabel htmlFor="password">Password Confirm</FormLabel>
+              <TextField
+                required
+                fullWidth
+                name="password_cf"
+                placeholder="••••••"
+                type="password"
+                id="password_cf"
+                autoComplete="new-password"
+                variant="outlined"
+                error={passwordCfError}
+                helperText={passwordCfErrorMessage}
+                color={passwordCfError ? 'error' : 'primary'}
+              />
+            </FormControl>
+
             <Button
               type="submit"
               fullWidth
@@ -205,7 +210,7 @@ export default function SignUp(props) {
                 fontSize: "1rem",
                 backgroundImage: "radial-gradient(circle, #ff7eb3, #841584)",
                 color: "white",
-                transition: "all 0.3s ease-in-out", // Chuyển động mượt mà
+                transition: "all 0.3s ease-in-out",
                 "&:hover": {
                   backgroundImage: "radial-gradient(circle, #841584, #ff7eb3)",
                   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",

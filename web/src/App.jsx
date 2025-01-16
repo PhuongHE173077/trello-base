@@ -4,6 +4,7 @@ import { Board } from "~/pages/Boards/_id"
 import NotFound from "./pages/404/NotFound"
 import SignInSide from "./pages/Auth/sign-in/Login"
 import SignUp from "./pages/Auth/sign-up/SignUp"
+import { VerifyAccount } from "./pages/Auth/verifyAccount/VerifyAccount"
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
         <Route path="/login" element={<SignInSide />} />
 
         <Route path="/register" element={<SignUp />} />
+
+        <Route path="/acount/verify" element={<VerifyAccount />} />
+
 
       </Routes>
       <ToastContainer
