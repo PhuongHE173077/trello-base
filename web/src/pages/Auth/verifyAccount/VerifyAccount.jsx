@@ -21,7 +21,7 @@ export const VerifyAccount = () => {
   if (!email || !token) return <Navigate to="/403" />
 
   //
-  if (Verified) return <PageLoading caption='Loading ...' />
+  if (!Verified) return <PageLoading caption='Loading ...' />
 
   return <Navigate to={`/login?verifyEmail=${email}`} />
 }

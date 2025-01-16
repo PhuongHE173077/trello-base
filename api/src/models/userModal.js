@@ -59,10 +59,30 @@ const createNew = async (data) => {
   }
 }
 
+
+const updateUser = async (data) => {
+  try {
+    Object.keys(data).forEach((fieldName) => {
+      if (INVALID_UPDATE_FILEDS.includes(fieldName)) {
+        delete data[fieldName]
+      }
+    })
+
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(data._id) },
+      { $set: data },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const userModal = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
   findOneByEmail,
   findOneById,
-  createNew
+  createNew,
+  updateUser
 }

@@ -7,7 +7,7 @@ import { pickUser } from "~/utils/slugify";
 import { sendEmail } from "~/utils/sendMail";
 import { WEBSITE_DOMAIN } from "~/utils/constants";
 import { verifyForm } from "~/utils/fommat";
-const createNew = async (req, res, next) => {
+const createNew = async (req) => {
   try {
     //check email exits
     const userExits = await userModal.findOneByEmail(req.body.email)
@@ -45,6 +45,52 @@ const createNew = async (req, res, next) => {
   }
 }
 
+const verifityAccount = async (data) => {
+  try {
+    //check email exits
+    const userExits = await userModal.findOneByEmail(data.email)
+
+    if (!userExits) throw new ApiError(StatusCodes.NOT_FOUND, 'Email not exits!')
+
+    if (userExits.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'this account has been activated!')
+
+    //check token valid
+    if (data.token !== userExits.verifyToken) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Token is invalid!')
+
+    //if don't have error, update isActive to true
+    const updateData = {
+      isActive: true,
+      verifyToken: null
+    }
+
+    const updatedUser = await userModal.updateUser(updateData)
+
+    return pickUser(updatedUser)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const login = async (data) => {
+  try {
+    const userExits = await userModal.findOneByEmail(data.email)
+
+    if (!userExits) throw new ApiError(StatusCodes.NOT_FOUND, 'Email not exits!')
+
+    if (!userExits.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'This account is not activated!')
+
+    if (!bcrypt.compareSync(data.password, userExits.password)) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'The email or password is incorrect!')
+
+    //if it don't have error, create token return frontend
+    const userInfo = { _id: userExits._id, email: userExits.email }
+
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const userService = {
-  createNew
+  createNew,
+  login,
+  verifityAccount
 }
