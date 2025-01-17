@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 const generateToken = async (userInfo, secretSignature, tokrenLife) => {
   try {
-    return jwt.sign(userInfo, secretSignature, { algorithm: 'RS256', expiresIn: tokrenLife })
+    return jwt.sign(userInfo, secretSignature, { algorithm: 'HS256', expiresIn: tokrenLife })
   } catch (error) {
     throw new Error(error)
   }

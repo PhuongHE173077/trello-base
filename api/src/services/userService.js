@@ -7,6 +7,8 @@ import { pickUser } from "~/utils/slugify";
 import { sendEmail } from "~/utils/sendMail";
 import { WEBSITE_DOMAIN } from "~/utils/constants";
 import { verifyForm } from "~/utils/fommat";
+import { JwtProvider } from "~/providers/JwtProvider";
+import { env } from "~/config/environment";
 const createNew = async (req) => {
   try {
     //check email exits
@@ -46,6 +48,7 @@ const createNew = async (req) => {
 }
 
 const verifityAccount = async (data) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     //check email exits
     const userExits = await userModal.findOneByEmail(data.email)
@@ -63,15 +66,16 @@ const verifityAccount = async (data) => {
       verifyToken: null
     }
 
-    const updatedUser = await userModal.updateUser(updateData)
+    const updatedUser = await userModal.updateUser(userExits._id, updateData)
 
     return pickUser(updatedUser)
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
 const login = async (data) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const userExits = await userModal.findOneByEmail(data.email)
 
@@ -81,11 +85,31 @@ const login = async (data) => {
 
     if (!bcrypt.compareSync(data.password, userExits.password)) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'The email or password is incorrect!')
 
-    //if it don't have error, create token return frontend
+    /** if it don't have error, create token return frontend */
+    //create user info in jwt token
     const userInfo = { _id: userExits._id, email: userExits.email }
 
+    // create access token and fresh token
+
+    const accessToken = await JwtProvider.generateToken(
+      userInfo,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      env.ACCESS_TOKEN_LIFE
+    )
+
+    const refreshToken = await JwtProvider.generateToken(
+      userInfo,
+      env.REFRESH_TOKEN_SECRET_SIGNATURE,
+      env.REFRESH_TOKEN_LIFE
+    )
+
+    return {
+      accessToken,
+      refreshToken,
+      ...pickUser(userExits)
+    }
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 

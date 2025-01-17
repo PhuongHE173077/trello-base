@@ -18,7 +18,10 @@ import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, 
 import { ReactComponent as TrelloIcon } from '~/assets/Trello.svg';
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
 import { GoogleIcon } from "../icons/CustomIcon";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUserAPI } from "~/redux/user/userSlice";
+import { toast } from "react-toastify";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -45,8 +48,22 @@ const Login = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm()
 
+  const dispath = useDispatch()
+  const navigate = useNavigate()
+
   const submitLogin = (data) => {
-    console.log("🚀 ~ handleLogin ~ data:", data)
+    const { email, password } = data
+
+    toast.promise(
+      dispath(loginUserAPI({ email, password })),
+      { pending: 'Login in process ...' }
+    ).then(res => {
+      console.log("🚀 ~ submitLogin ~ res:", res)
+      if (!res.error) {
+        navigate('/')
+      }
+    })
+
 
   }
 

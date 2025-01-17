@@ -60,7 +60,7 @@ const createNew = async (data) => {
 }
 
 
-const updateUser = async (data) => {
+const updateUser = async (userId, data) => {
   try {
     Object.keys(data).forEach((fieldName) => {
       if (INVALID_UPDATE_FILEDS.includes(fieldName)) {
@@ -69,7 +69,7 @@ const updateUser = async (data) => {
     })
 
     const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate(
-      { _id: new ObjectId(data._id) },
+      { _id: new ObjectId(userId) },
       { $set: data },
       { returnDocument: 'after' }
     )
