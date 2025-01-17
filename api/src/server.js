@@ -6,10 +6,13 @@ import { CONNECT_DB } from './config/mongodb'
 import { APIs_V1 } from './routes/v1'
 import { errorHandlingMiddleware } from './middlewares/erroHandlingMiddlewares'
 import { corsOptions } from './config/cors'
+import cookieParser from 'cookie-parser'
 var cors = require('cors')
 
 const START_SERVER = () => {
   const app = express()
+
+  app.use(cookieParser())
 
   const hostname = env.APP_HOST
   const port = env.APP_POST

@@ -9,7 +9,7 @@ const instance = axios.create({
 // max time of 1 request 
 instance.defaults.timeout = 1000 * 60 * 5
 
-//accept cookie to axios handle jwt token 
+//allow send cookie in each request to server 
 instance.defaults.withCredentials = true
 
 instance.interceptors.request.use(function (config) {
@@ -33,7 +33,7 @@ instance.interceptors.response.use(function (response) {
 
     interceptorLoadingElements(false)
 
-    if (error?.response?.status !== 401) {
+    if (error?.response?.status !== 410) {
         toast.error(error?.response?.data?.message)
     }
 
