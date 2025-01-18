@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes"
 import ms from "ms"
 import { userService } from "~/services/userService"
+import ApiError from "~/utils/ApiError"
 
 const createNew = async (req, res, next) => {
   try {
@@ -29,7 +30,7 @@ const login = async (req, res, next) => {
       sameSize: 'none',
       maxAge: ms('14 days')
     })
-    res.status(StatusCodes.CREATED).json(result)
+    res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
   }
@@ -38,14 +39,41 @@ const verifityAccount = async (req, res, next) => {
   try {
     const result = await userService.verifityAccount(req.body)
 
-    res.status(StatusCodes.CREATED).json(result)
+    res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
   }
 }
 
+const logout = async (req, res, next) => {
+  try {
+    res.clearCokies('accessToken')
+    res.clearCokies('refreshToken')
+
+    res.status(StatusCodes.OK).json({ loggedOut: true })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const refreshToken = async (req, res, next) => {
+  try {
+    const result = await userService.refreshToken(req.body)
+    res.cookie('accessToken', result.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSize: 'none',
+      maxAge: ms('14 days')
+    })
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNAUTHORIZED, 'plece login again'))
+  }
+}
 export const userController = {
   createNew,
   login,
-  verifityAccount
+  verifityAccount,
+  logout,
+  refreshToken
 }

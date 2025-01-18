@@ -113,8 +113,31 @@ const login = async (data) => {
   }
 }
 
+const refreshToken = async (data) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const refreshTokenDecoded = await JwtProvider.verifyToken(data.refreshToken, env.REFRESH_TOKEN_SECRET_SIGNATURE)
+    const userInfo = {
+      _id: refreshTokenDecoded._id,
+      email: refreshTokenDecoded.email
+    }
+    const accessToken = await JwtProvider.generateToken(
+      userInfo,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      env.ACCESS_TOKEN_LIFE
+    )
+
+    return {
+      accessToken
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   createNew,
   login,
-  verifityAccount
+  verifityAccount,
+  refreshToken
 }
