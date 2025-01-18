@@ -14,7 +14,6 @@ const isAuthorized = async (req, res, next) => {
   try {
     //verify token
     const accessTokenDecoded = await JwtProvider.verifyToken(clientToken, env.ACCESS_TOKEN_SECRET_SIGNATURE)
-    console.log("🚀 ~ isAuthorized ~ accessTokenDecoded:", accessTokenDecoded)
 
     //if token is valid , save token to req to use later
     req.jwtDecoded = accessTokenDecoded
