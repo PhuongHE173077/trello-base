@@ -94,12 +94,14 @@ const login = async (data) => {
     const accessToken = await JwtProvider.generateToken(
       userInfo,
       env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      // 5
       env.ACCESS_TOKEN_LIFE
     )
 
     const refreshToken = await JwtProvider.generateToken(
       userInfo,
       env.REFRESH_TOKEN_SECRET_SIGNATURE,
+      // '1h'
       env.REFRESH_TOKEN_LIFE
     )
 
@@ -116,7 +118,7 @@ const login = async (data) => {
 const refreshToken = async (data) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const refreshTokenDecoded = await JwtProvider.verifyToken(data.refreshToken, env.REFRESH_TOKEN_SECRET_SIGNATURE)
+    const refreshTokenDecoded = await JwtProvider.verifyToken(data, env.REFRESH_TOKEN_SECRET_SIGNATURE)
     const userInfo = {
       _id: refreshTokenDecoded._id,
       email: refreshTokenDecoded.email

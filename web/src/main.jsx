@@ -9,8 +9,12 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
+import { injectStore } from './Utils/axiosCustomiz.js';
 
 let persistor = persistStore(store);
+
+//inject store to use store in non-component files
+injectStore(store)
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter basename='/'>

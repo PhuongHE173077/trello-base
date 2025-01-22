@@ -45,3 +45,7 @@ export const verifyUserAPI = async (data) => {
   toast.success('Account verify successfully!, Now you can login to enjoy our services!')
   return res
 }
+
+export const refreshTokenAPI = async () => {
+  return await axios.get(`v1/users/refresh_token`)
+}

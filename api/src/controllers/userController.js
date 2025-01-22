@@ -47,8 +47,8 @@ const verifityAccount = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    res.clearCokies('accessToken')
-    res.clearCokies('refreshToken')
+    res.clearCookie('accessToken')
+    res.clearCookie('refreshToken')
 
     res.status(StatusCodes.OK).json({ loggedOut: true })
   } catch (error) {
@@ -58,7 +58,9 @@ const logout = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    const result = await userService.refreshToken(req.body)
+    console.log(req.cookies?.refreshToken);
+
+    const result = await userService.refreshToken(req.cookies?.refreshToken)
     res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
       secure: true,

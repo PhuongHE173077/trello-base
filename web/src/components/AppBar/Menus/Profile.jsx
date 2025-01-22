@@ -10,16 +10,39 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
+import { logoutUserAPI, selectCurrentUser } from '~/redux/user/userSlice';
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const dispath = useDispatch();
+  const currentUser = useSelector(selectCurrentUser)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+
     setAnchorEl(null);
   };
+  const handleLougout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispath(logoutUserAPI())
+
+      }
+    });
+  }
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -33,7 +56,7 @@ export default function Profile() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }} src='https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-1-1.jpg '></Avatar>
+            <Avatar sx={{ width: 32, height: 32 }} src={currentUser?.avatar}></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -74,11 +97,14 @@ export default function Profile() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar sx={{ width: 32, height: 32, mr: 2 }} /> Profile
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar sx={{ width: 32, height: 32, mr: 2 }} /> My account
+        <MenuItem onClick={handleClose}
+          sx={{
+            '&:hover': {
+              color: 'primary.main'
+            }
+          }}
+        >
+          <Avatar sx={{ width: 32, height: 32 }} src={currentUser?.avatar}></Avatar> Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
@@ -93,9 +119,19 @@ export default function Profile() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLougout}
+          sx={{
+            '&:hover': {
+              color: 'red',
+              '& .logout-icon': {
+                color: 'red'
+              }
+            }
+
+          }}
+        >
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Logout className='logout-icon' fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
