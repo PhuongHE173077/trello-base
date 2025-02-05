@@ -58,7 +58,7 @@ const logout = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    console.log(req.cookies?.refreshToken);
+    console.log(req.cookies?.refreshToken)
 
     const result = await userService.refreshToken(req.cookies?.refreshToken)
     res.cookie('accessToken', result.accessToken, {
@@ -72,10 +72,25 @@ const refreshToken = async (req, res, next) => {
     next(new ApiError(StatusCodes.UNAUTHORIZED, 'plece login again'))
   }
 }
+
+const update = async (req, res, next) => {
+  try {
+    const userId = req.jwtDecoded._id
+    const userAvataFile = req.file
+
+    const result = await userService.update(userId, req.body, userAvataFile)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+
+  }
+}
 export const userController = {
   createNew,
   login,
   verifityAccount,
   logout,
-  refreshToken
+  refreshToken,
+  update
 }

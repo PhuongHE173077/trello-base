@@ -46,7 +46,7 @@ const theme = extendTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+
           fontSize: '0.875rem',
           '.MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.primary.light

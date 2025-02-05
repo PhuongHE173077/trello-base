@@ -9,6 +9,7 @@ import { WEBSITE_DOMAIN } from "~/utils/constants";
 import { verifyForm } from "~/utils/fommat";
 import { JwtProvider } from "~/providers/JwtProvider";
 import { env } from "~/config/environment";
+import { cloudinaryProvider } from "~/providers/CloudinaryProvider";
 const createNew = async (req) => {
   try {
     //check email exits
@@ -26,6 +27,8 @@ const createNew = async (req) => {
       username: formName,
       //set default display name , can be changed later
       displayName: formName,
+
+      bio: 'Hello everyone !',
 
       verifyToken: uuidv4()
     }
@@ -137,9 +140,44 @@ const refreshToken = async (data) => {
   }
 }
 
+const update = async (userId, data, userAvataFile) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const exitsUser = await userModal.findOneById(userId)
+
+    if (!exitsUser) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!')
+
+    if (!exitsUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'This account is not activated!')
+
+    let updatedUser
+
+    if (data.currentPassword && data.newPassword) {
+      if (!bcrypt.compareSync(data.currentPassword, exitsUser.password)) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'The current password is incorrect!')
+
+      updatedUser = await userModal.updateUser(exitsUser._id, {
+        password: bcrypt.hashSync(data.newPassword, 8)
+      })
+    } else if (userAvataFile) {
+      //upload file to cloudinary
+      const resultUpload = await cloudinaryProvider.streamUpload(userAvataFile.buffer, 'users')
+
+      // save url of file to db
+
+      updatedUser = await userModal.updateUser(exitsUser._id, { avatar: resultUpload.secure_url })
+
+    } else {
+      updatedUser = await userModal.updateUser(exitsUser._id, data)
+    }
+    return pickUser(updatedUser)
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   createNew,
   login,
   verifityAccount,
-  refreshToken
+  refreshToken,
+  update
 }

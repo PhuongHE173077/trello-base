@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { logoutUserAPI, selectCurrentUser } from '~/redux/user/userSlice';
 
@@ -35,7 +36,7 @@ export default function Profile() {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, logout!",
     }).then((result) => {
       if (result.isConfirmed) {
         dispath(logoutUserAPI())
@@ -97,15 +98,18 @@ export default function Profile() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}
-          sx={{
-            '&:hover': {
-              color: 'primary.main'
-            }
-          }}
-        >
-          <Avatar sx={{ width: 32, height: 32 }} src={currentUser?.avatar}></Avatar> Profile
-        </MenuItem>
+        <Link to={'/settings/account'} style={{ color: 'inherit' }}>
+          <MenuItem onClick={handleClose}
+            sx={{
+              '&:hover': {
+                color: 'primary.main'
+              }
+            }}
+          >
+            <Avatar sx={{ width: 32, height: 32, mr: 1.5 }} src={currentUser?.avatar}></Avatar> Profile
+          </MenuItem>
+        </Link>
+
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
