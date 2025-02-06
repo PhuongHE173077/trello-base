@@ -1,11 +1,13 @@
 import { cyan, grey } from '@mui/material/colors';
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
+
 const APP_BAR_HEIGHT = '58px';
 const BOARD_BAR_HEIGHT = '58px';
 const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGHT})`;
 const COLUMN_HEADER_HEIGHT = "50px";
 const COLUMN_FOOTER_HEIGHT = "58px";
+
 
 const theme = extendTheme({
   trello: {
@@ -23,6 +25,7 @@ const theme = extendTheme({
           main: '#FFFFFF'
         },
       },
+
 
     },
     dark: {
@@ -43,10 +46,12 @@ const theme = extendTheme({
       },
     },
 
+
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+
+
           fontSize: '0.875rem',
           '.MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.primary.light
@@ -60,6 +65,7 @@ const theme = extendTheme({
       },
     },
 
+
     MuiInputLabel: {
       styleOverrides: {
         root: ({ theme }) => ({
@@ -68,6 +74,7 @@ const theme = extendTheme({
         }),
       }
     },
+
 
     MuiCssBaseline: {
       styleOverrides: {
@@ -98,5 +105,6 @@ const theme = extendTheme({
     }
   },
 });
+
 
 export default theme;

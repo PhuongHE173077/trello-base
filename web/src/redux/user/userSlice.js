@@ -2,10 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import axios from "~/Utils/axiosCustomiz";
 
+
 //declare value state of slice in redux
 const initialState = {
   currentUser: null,
 }
+
 
 //xử lí catching api bất đồng bộ
 export const loginUserAPI = createAsyncThunk(
@@ -14,6 +16,8 @@ export const loginUserAPI = createAsyncThunk(
     return await axios.post(`v1/users/login`, data)
   }
 )
+
+
 
 
 export const logoutUserAPI = createAsyncThunk(
@@ -27,12 +31,22 @@ export const logoutUserAPI = createAsyncThunk(
   }
 )
 
+
+export const updateUserAPI = createAsyncThunk(
+  'user/updateUserAPI',
+  async (data) => {
+    return await axios.put(`v1/users/update`, data)
+  }
+)
+
+
 //declare silce in redux store
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   // reducer : nơi xửu lý dữ liệu đồng bộ
   reducers: {
+
 
   },
   //extraReducers: Nơi xửu lý dũ liệu bất đồng bộ
@@ -43,17 +57,27 @@ export const userSlice = createSlice({
       state.currentUser = user
     })
 
+
     builder.addCase(logoutUserAPI.fulfilled, (state) => {
       state.currentUser = null
+    })
+
+
+    builder.addCase(updateUserAPI.fulfilled, (state, action) => {
+      const user = action.payload
+      state.currentUser = user
     })
   }
 })
 
+
 // Action creators are generated for each case reducer function
 // export const { } = userSlice.actions
+
 
 export const selectCurrentUser = (state) => {
   return state.user.currentUser
 }
+
 
 export const userReducer = userSlice.reducer

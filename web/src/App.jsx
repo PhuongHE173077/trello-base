@@ -7,30 +7,48 @@ import SignUp from "./pages/Auth/sign-up/SignUp"
 import { VerifyAccount } from "./pages/Auth/verifyAccount/VerifyAccount"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "./redux/user/userSlice"
+import Settings from "./pages/Setting/Settings"
+
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to="/login" replace={true} />
+
 
   return <Outlet />
 }
 function App() {
 
+
   const currentUser = useSelector(selectCurrentUser)
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to={`/boards/678600f8c016a1df3cb4dff1`} />} replace={true} />
+        <Route path="/" element={<Navigate to={`/boards/677aa7dfcc84b47c8bcc93ac`} />} replace={true} />
+
 
         <Route element={<ProtectedRoute user={currentUser} />}>
+
+
           <Route path="/boards/:boardId" element={<Board />} />
+
+
+          <Route path="/settings/account" element={<Settings />} />
+
+
+          <Route path="/settings/security" element={<Settings />} />
+
+
         </Route>
 
 
         <Route path="*" element={<NotFound />} />
 
+
         <Route path="/login" element={<SignInSide />} />
 
+
         <Route path="/register" element={<SignUp />} />
+
 
         <Route path="/acount/verify" element={<VerifyAccount />} />
 
@@ -44,5 +62,6 @@ function App() {
     </>
   )
 }
+
 
 export default App
