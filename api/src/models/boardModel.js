@@ -5,7 +5,9 @@ import { BOARD_TYPES } from "~/utils/constants"
 import { columnModal } from "./columnModal"
 import { cardModal } from "./cardModal"
 
+
 const Joi = require("joi")
+
 
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLECTION_SCHEMA = Joi.object({
@@ -14,18 +16,31 @@ const BOARD_COLECTION_SCHEMA = Joi.object({
   description: Joi.string().min(5).max(255).trim().strict().required(),
   type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required(),
 
+
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
+
+  // board Admins
+  ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
+
+  //board members
+  memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
 
+
 const INVALID_UPDATE_FILEDS = ['_id', 'createdAt']
+
 
 const validateBeforeCreate = async (data) => {
   return await BOARD_COLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
+
 
 const createNewBoard = async (data) => {
   try {
@@ -36,6 +51,7 @@ const createNewBoard = async (data) => {
   }
 }
 
+
 const findOneById = async (id) => {
   try {
     return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
@@ -43,6 +59,7 @@ const findOneById = async (id) => {
     throw new Error(error)
   }
 }
+
 
 const getDetail = async (id) => {
   try {
@@ -81,6 +98,8 @@ const getDetail = async (id) => {
 }
 
 
+
+
 const pushColumnOrderIds = async (column) => {
   try {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
@@ -88,12 +107,13 @@ const pushColumnOrderIds = async (column) => {
       { $push: { columnOrderIds: new ObjectId(column._id) } },
       { returnDocument: 'after' }
     )
-    //mongo db 6.0 return result 
+    //mongo db 6.0 return result
     return result.value
   } catch (error) {
     throw new Error(error)
   }
 }
+
 
 const update = async (boardId, updatedData) => {
   try {
@@ -106,6 +126,7 @@ const update = async (boardId, updatedData) => {
       updatedData.columnOrderIds = updatedData.columnOrderIds.map(id => new ObjectId(id))
     }
 
+
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(boardId) },
       { $set: updatedData },
@@ -116,7 +137,9 @@ const update = async (boardId, updatedData) => {
     throw new Error(error)
   }
 
+
 }
+
 
 const pullOrderColummIds = async (column) => {
   try {
@@ -125,12 +148,69 @@ const pullOrderColummIds = async (column) => {
       { $pull: { columnOrderIds: new ObjectId(column._id) } },
       { returnDocument: 'after' }
     )
-    //mongo db 6.0 return result 
+    //mongo db 6.0 return result
     return result.value
   } catch (error) {
     throw new Error(error)
   }
 }
+
+
+const getBoards = async (userId, page, itemsPerPage) => {
+  try {
+    const queryCondtion = [
+      // condition 1 : board is not deleted
+      { _destroy: false },
+
+
+      // condition 2 : User must be owner or member in board
+      {
+        $or: [
+          { ownerIds: { $all: [new ObjectId(userId)] } },
+          { memberIds: { $all: [new ObjectId(userId)] } }
+        ]
+      }
+    ]
+    const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate(
+      [
+        { $match: { $and: queryCondtion } },
+        //sort by name title
+        { $sort: { title: 1 } },
+
+
+        //handle many Workflow in 1 query
+        {
+          $facet: {
+            // workflow 1 : query Boards
+            'queryBoards': [
+              { $skip: (page - 1) * itemsPerPage },//skip board before page
+              { $limit: itemsPerPage } //Litmit max count return page
+            ],
+            // workflow 2 : query total Boards
+            'querrTotalBoards': [{ $count: 'totalBoards' }]
+          }
+        }
+      ],
+      //fix sort (B -> a)
+      { collation: { locale: 'en' } }
+    ).toArray()
+
+
+    const res = query[0]
+
+
+    console.log("🚀 ~ res:", res)
+
+
+    return {
+      boards: res.queryBoards || [],
+      totalBoards: res.querrTotalBoards[0]?.totalBoards || 0
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 
 export const boardModal = {
   BOARD_COLLECTION_NAME,
@@ -140,5 +220,7 @@ export const boardModal = {
   getDetail,
   pushColumnOrderIds,
   update,
-  pullOrderColummIds
+  pullOrderColummIds,
+  getBoards
 }
+
