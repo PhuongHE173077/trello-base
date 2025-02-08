@@ -16,7 +16,6 @@ export const fetchBoardDetailsAPI = createAsyncThunk(
     return await axios.get(`v1/boards/${boardId}`)
   }
 )
-
 //declare silce in redux store
 export const activeboardSlice = createSlice({
   name: 'activeBoard',
@@ -24,7 +23,7 @@ export const activeboardSlice = createSlice({
   // reducer : nơi xửu lý dữ liệu đồng bộ
   reducers: {
     updateCurrentActiveBoard: (state, action) => {
-      /**action.payload là chuẩn đặt tên dữ liẹu vào reducer, ở đây chúng 
+      /**action.payload là chuẩn đặt tên dữ liẹu vào reducer, ở đây chúng
       ta đặt tên có ý nhĩa hơnhơn  */
 
       const board = action.payload
@@ -33,7 +32,9 @@ export const activeboardSlice = createSlice({
       state.currentActiveBoard = board
     },
 
-
+    reloadBoard: (state) => {
+      state.currentActiveBoard = null
+    }
   },
   //extraReducers: Nơi xửu lý dũ liệu bất đồng bộ
   extraReducers: (builder) => {
@@ -57,7 +58,8 @@ export const activeboardSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateCurrentActiveBoard } = activeboardSlice.actions
+export const { updateCurrentActiveBoard, reloadBoard } = activeboardSlice.actions
+
 
 export const selectCurrentActiveBoard = (state) => {
   return state.activeBoard.currentActiveBoard

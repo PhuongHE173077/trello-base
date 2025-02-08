@@ -26,6 +26,7 @@ const createNewBoard = async (reqBody) => {
 }
 
 const getDetail = async (userId, boardId) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const board = await boardModal.getDetail(userId, boardId)
     if (!board) {
@@ -41,7 +42,7 @@ const getDetail = async (userId, boardId) => {
 
     return resBoard
   } catch (error) {
-    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+    throw error
   }
 }
 
@@ -51,14 +52,12 @@ const update = async (boardId, data) => {
       ...data,
       updatedAt: Date.now()
     }
-
     const board = await boardModal.update(boardId, updatedData)
     return board
   } catch (error) {
     throw new Error(error)
   }
 }
-
 
 const moveCardToDifferentColumn = async (data) => {
   try {

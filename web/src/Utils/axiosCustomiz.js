@@ -3,15 +3,18 @@ import { toast } from 'react-toastify';
 import { interceptorLoadingElements } from "./fomatter";
 import { logoutUserAPI } from "~/redux/user/userSlice";
 import { refreshTokenAPI } from "~/apis";
+import { reloadBoard } from "~/redux/activeBoard/activeBoardSlice";
 
 const instance = axios.create({
     baseURL: 'http://localhost:8017/',
 });
 
-// max time of 1 request 
+
+// max time of 1 request
 instance.defaults.timeout = 1000 * 60 * 5
 
-//allow send cookie in each request to server 
+
+//allow send cookie in each request to server
 instance.defaults.withCredentials = true
 
 //handle redux store in non-component files
@@ -43,12 +46,16 @@ instance.interceptors.response.use(function (response) {
 
     interceptorLoadingElements(false)
 
-    //handle error refresh token 
+    //handle error refresh token
     if (error?.response?.status === 401) {
         //
         axiosRuduxStore.dispatch(logoutUserAPI(false))
     }
 
+    if (error?.response?.status === 404) {
+        //
+        axiosRuduxStore.dispatch(reloadBoard())
+    }
     const originalRequest = error.config;
     console.log('originalRequest:', originalRequest);
 
