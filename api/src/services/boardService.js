@@ -18,9 +18,7 @@ const createNewBoard = async (reqBody) => {
 
     const createdBoard = await boardModal.createNewBoard(newBoard)
 
-
     const getNewBoard = await boardModal.findOneById(createdBoard.insertedId)
-
 
     return getNewBoard
   } catch (error) {
@@ -29,9 +27,10 @@ const createNewBoard = async (reqBody) => {
 }
 
 
-const getDetail = async (boardId) => {
+const getDetail = async (userId, boardId) => {
+  // eslint-disable-next-line no-useless-catch
   try {
-    const board = await boardModal.getDetail(boardId)
+    const board = await boardModal.getDetail(userId, boardId)
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'The Board Not found')
     }
@@ -42,13 +41,11 @@ const getDetail = async (boardId) => {
       col.cards = resBoard.cards.filter(card => col._id.toString() === card.columnId.toString())
     })
 
-
     delete resBoard.cards
-
 
     return resBoard
   } catch (error) {
-    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+    throw error
   }
 }
 

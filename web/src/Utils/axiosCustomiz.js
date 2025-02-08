@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { interceptorLoadingElements } from "./fomatter";
 import { logoutUserAPI } from "~/redux/user/userSlice";
 import { refreshTokenAPI } from "~/apis";
+import { reloadBoard } from "~/redux/activeBoard/activeBoardSlice";
 
 const instance = axios.create({
     baseURL: 'http://localhost:8017/',
@@ -47,6 +48,11 @@ instance.interceptors.response.use(function (response) {
     if (error?.response?.status === 401) {
         //
         axiosRuduxStore.dispatch(logoutUserAPI(false))
+    }
+
+    if (error?.response?.status === 404) {
+        //
+        axiosRuduxStore.dispatch(reloadBoard())
     }
 
     const originalRequest = error.config;

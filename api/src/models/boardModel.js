@@ -16,17 +16,13 @@ const BOARD_COLECTION_SCHEMA = Joi.object({
   description: Joi.string().min(5).max(255).trim().strict().required(),
   type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required(),
 
-
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
-
 
   // board Admins
   ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
 
-
   //board members
   memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
-
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -61,43 +57,47 @@ const findOneById = async (id) => {
 }
 
 
-const getDetail = async (id) => {
+const getDetail = async (userId, boardId) => {
   try {
-    try {
-      const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-        {
-          $match: {
-            _id: new ObjectId(id),
-            _destroy: false
-          }
-        },
-        {
-          $lookup: {
-            from: columnModal.COLUMN_COLLECTION_NAME,
-            localField: '_id',
-            foreignField: 'boardId',
-            as: 'columns'
-          }
-        },
-        {
-          $lookup: {
-            from: cardModal.CARD_COLLECTION_NAME,
-            localField: '_id',
-            foreignField: 'boardId',
-            as: 'cards'
-          }
+    const queryCondtion = [
+      { _id: new ObjectId(boardId) },
+      { _destroy: false },
+      {
+        $or: [
+          { ownerIds: { $all: [new ObjectId(userId)] } },
+          { memberIds: { $all: [new ObjectId(userId)] } }
+        ]
+      }
+    ]
+
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
+      {
+        $match: { $and: queryCondtion }
+      },
+      {
+        $lookup: {
+          from: columnModal.COLUMN_COLLECTION_NAME,
+          localField: '_id',
+          foreignField: 'boardId',
+          as: 'columns'
         }
-      ]).toArray()
-      return result[0] || null
-    } catch (error) {
-      throw new Error(error)
-    }
+      },
+      {
+        $lookup: {
+          from: cardModal.CARD_COLLECTION_NAME,
+          localField: '_id',
+          foreignField: 'boardId',
+          as: 'cards'
+        }
+      }
+    ]).toArray()
+    console.log("result", result[0])
+
+    return result[0] || null
   } catch (error) {
     throw new Error(error)
   }
 }
-
-
 
 
 const pushColumnOrderIds = async (column) => {
@@ -114,7 +114,6 @@ const pushColumnOrderIds = async (column) => {
   }
 }
 
-
 const update = async (boardId, updatedData) => {
   try {
     Object.keys(updatedData).forEach((fieldName) => {
@@ -126,7 +125,6 @@ const update = async (boardId, updatedData) => {
       updatedData.columnOrderIds = updatedData.columnOrderIds.map(id => new ObjectId(id))
     }
 
-
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(boardId) },
       { $set: updatedData },
@@ -136,8 +134,6 @@ const update = async (boardId, updatedData) => {
   } catch (error) {
     throw new Error(error)
   }
-
-
 }
 
 
@@ -161,7 +157,6 @@ const getBoards = async (userId, page, itemsPerPage) => {
     const queryCondtion = [
       // condition 1 : board is not deleted
       { _destroy: false },
-
 
       // condition 2 : User must be owner or member in board
       {
@@ -195,12 +190,7 @@ const getBoards = async (userId, page, itemsPerPage) => {
       { collation: { locale: 'en' } }
     ).toArray()
 
-
     const res = query[0]
-
-
-    console.log("🚀 ~ res:", res)
-
 
     return {
       boards: res.queryBoards || [],
@@ -223,4 +213,3 @@ export const boardModal = {
   pullOrderColummIds,
   getBoards
 }
-

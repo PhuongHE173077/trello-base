@@ -33,6 +33,10 @@ export const activeboardSlice = createSlice({
       state.currentActiveBoard = board
     },
 
+    reloadBoard: (state) => {
+      state.currentActiveBoard = null
+    }
+
 
   },
   //extraReducers: Nơi xửu lý dũ liệu bất đồng bộ
@@ -57,7 +61,7 @@ export const activeboardSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateCurrentActiveBoard } = activeboardSlice.actions
+export const { updateCurrentActiveBoard, reloadBoard } = activeboardSlice.actions
 
 export const selectCurrentActiveBoard = (state) => {
   return state.activeBoard.currentActiveBoard
