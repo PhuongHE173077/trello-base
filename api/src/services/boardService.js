@@ -15,12 +15,9 @@ const createNewBoard = async (reqBody) => {
       slug: slugify(reqBody.title)
     }
 
-
     const createdBoard = await boardModal.createNewBoard(newBoard)
 
-
     const getNewBoard = await boardModal.findOneById(createdBoard.insertedId)
-
 
     return getNewBoard
   } catch (error) {
@@ -28,30 +25,25 @@ const createNewBoard = async (reqBody) => {
   }
 }
 
-
-const getDetail = async (boardId) => {
+const getDetail = async (userId, boardId) => {
   try {
-    const board = await boardModal.getDetail(boardId)
+    const board = await boardModal.getDetail(userId, boardId)
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'The Board Not found')
     }
     const resBoard = cloneDeep(board)
 
-
     resBoard.columns.forEach(col => {
       col.cards = resBoard.cards.filter(card => col._id.toString() === card.columnId.toString())
     })
 
-
     delete resBoard.cards
-
 
     return resBoard
   } catch (error) {
     throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
   }
 }
-
 
 const update = async (boardId, data) => {
   try {
@@ -60,48 +52,32 @@ const update = async (boardId, data) => {
       updatedAt: Date.now()
     }
 
-
     const board = await boardModal.update(boardId, updatedData)
     return board
   } catch (error) {
     throw new Error(error)
   }
-
-
 }
 
 
 const moveCardToDifferentColumn = async (data) => {
   try {
-    //
-
-
-    console.log(data)
-
-
     await columnModal.update(data.prevColumnId, { cardOrderIds: data.prevCardOrderIds })
     await columnModal.update(data.nextColumId, { cardOrderIds: data.nextCardOrderIds })
 
-
     await cardModal.update(data.currentCardId, { columnId: data.nextColumId })
-
 
     return { updatedResult: 'Succesfully ' }
   } catch (error) {
     throw new Error(error)
   }
-
-
 }
-
 
 const getBoards = async (userId, page, itemsPerPage) => {
   try {
     if (!page) page = DEFAULT_PAGE
 
-
     if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE
-
 
     //tranform page and itemsPerPage to number
     const boards = await boardModal.getBoards(userId, parseInt(page), parseInt(itemsPerPage))
@@ -119,4 +95,3 @@ export const boardService = {
   moveCardToDifferentColumn,
   getBoards
 }
-
