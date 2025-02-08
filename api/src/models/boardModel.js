@@ -16,6 +16,12 @@ const BOARD_COLECTION_SCHEMA = Joi.object({
 
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
 
+  // board Admins
+  ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
+  //board members
+  memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
@@ -132,6 +138,56 @@ const pullOrderColummIds = async (column) => {
   }
 }
 
+const getBoards = async (userId, page, itemsPerPage) => {
+  try {
+    const queryCondtion = [
+      // condition 1 : board is not deleted
+      { _destroy: false },
+
+      // condition 2 : User must be owner or member in board
+      {
+        $or: [
+          { ownerIds: { $all: [new ObjectId(userId)] } },
+          { memberIds: { $all: [new ObjectId(userId)] } }
+        ]
+      }
+    ]
+    const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate(
+      [
+        { $match: { $and: queryCondtion } },
+        //sort by name title
+        { $sort: { title: 1 } },
+
+        //handle many Workflow in 1 query
+        {
+          $facet: {
+            // workflow 1 : query Boards
+            'queryBoards': [
+              { $skip: (page - 1) * itemsPerPage },//skip board before page
+              { $limit: itemsPerPage } //Litmit max count return page 
+            ],
+            // workflow 2 : query total Boards
+            'querrTotalBoards': [{ $count: 'totalBoards' }]
+          }
+        }
+      ],
+      //fix sort (B -> a)
+      { collation: { locale: 'en' } }
+    ).toArray()
+
+    const res = query[0]
+
+    console.log("🚀 ~ res:", res)
+
+    return {
+      boards: res.queryBoards || [],
+      totalBoards: res.querrTotalBoards[0]?.totalBoards || 0
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const boardModal = {
   BOARD_COLLECTION_NAME,
   BOARD_COLECTION_SCHEMA,
@@ -140,5 +196,6 @@ export const boardModal = {
   getDetail,
   pushColumnOrderIds,
   update,
-  pullOrderColummIds
+  pullOrderColummIds,
+  getBoards
 }

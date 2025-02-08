@@ -2,10 +2,10 @@ import { toast } from "react-toastify";
 import axios from "~/Utils/axiosCustomiz";
 
 //Board API 
-// export const fetchBoardDetailsAPI = async (boardId) => {
-//   return await axios.get(`v1/boards/${boardId}`)
-// }
 
+export const fetchBoardsAPI = async (sarchParams) => {
+  return await axios.get(`v1/boards${sarchParams}`)
+}
 export const updateBoardDetailsAPI = async (boardId, updateData) => {
   return await axios.put(`v1/boards/${boardId}`, updateData)
 }

@@ -8,6 +8,7 @@ import { VerifyAccount } from "./pages/Auth/verifyAccount/VerifyAccount"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "./redux/user/userSlice"
 import Settings from "./pages/Setting/Settings"
+import Dashboard from "./pages/Boards"
 
 
 const ProtectedRoute = ({ user }) => {
@@ -25,6 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to={`/boards/677aa7dfcc84b47c8bcc93ac`} />} replace={true} />
 
+        <Route path="/boards" element={<Dashboard />} />
 
         <Route element={<ProtectedRoute user={currentUser} />}>
 
