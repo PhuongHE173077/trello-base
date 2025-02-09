@@ -4,7 +4,6 @@ import axios from "~/Utils/axiosCustomiz";
 
 //Board API
 
-
 export const fetchBoardsAPI = async (sarchParams) => {
   return await axios.get(`v1/boards${sarchParams}`)
 }
@@ -12,6 +11,9 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
   return await axios.put(`v1/boards/${boardId}`, updateData)
 }
 
+export const createNewBoardAPI = async (boardData) => {
+  return await axios.post(`v1/boards`, boardData)
+}
 
 export const moveCardToDifferentColumnAPI = async (updateData) => {
   return await axios.put(`v1/boards/supports/moving_cards`, updateData)
@@ -60,6 +62,3 @@ export const verifyUserAPI = async (data) => {
 export const refreshTokenAPI = async () => {
   return await axios.get(`v1/users/refresh_token`)
 }
-
-
-
