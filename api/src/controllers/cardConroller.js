@@ -17,7 +17,9 @@ const update = async (req, res, next) => {
   try {
     const cardId = req.params.id
 
-    const createBoard = await cardService.update(cardId, req.body)
+    const cardCoverFile = req.file
+
+    const createBoard = await cardService.update(cardId, req.body, cardCoverFile)
 
     res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {

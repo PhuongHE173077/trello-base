@@ -6,34 +6,20 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditNoteIcon from '@mui/icons-material/EditNote'
 
-const markdownValueExample = `
-  *\`Markdown Content Example:\`*
 
-  **Hello world | TrungQuanDev - Một Lập Trình Viên | Trello MERN Stack Advanced**
-  [![](https://avatars.githubusercontent.com/u/14128099?v=4&s=80)](https://avatars.githubusercontent.com/u/14128099?v=4)
-  \`\`\`javascript
-  import React from "react"
-  import ReactDOM from "react-dom"
-  import MDEditor from '@uiw/react-md-editor'
-  \`\`\`
-`
-/**
- * Vài ví dụ Markdown từ lib
- * https://codesandbox.io/embed/markdown-editor-for-react-izdd6?fontsize=14&hidenavigation=1&theme=dark
- */
-function CardDescriptionMdEditor() {
-  // Lấy giá trị 'dark', 'light' hoặc 'system' mode từ MUI để support phần Markdown bên dưới: data-color-mode={mode}
-  // https://www.npmjs.com/package/@uiw/react-md-editor#support-dark-modenight-mode
+function CardDescriptionMdEditor({ cardDescriptionProps, handleUpdateCardDescription }) {
+
   const { mode } = useColorScheme()
 
   // State xử lý chế độ Edit và chế độ View
   const [markdownEditMode, setMarkdownEditMode] = useState(false)
   // State xử lý giá trị markdown khi chỉnh sửa
-  const [cardDescription, setCardDescription] = useState(markdownValueExample)
+  const [cardDescription, setCardDescription] = useState(cardDescriptionProps)
 
   const updateCardDescription = () => {
     setMarkdownEditMode(false)
-    console.log('cardDescription: ', cardDescription)
+
+    handleUpdateCardDescription(cardDescription)
   }
 
   return (
@@ -47,7 +33,7 @@ function CardDescriptionMdEditor() {
               previewOptions={{ rehypePlugins: [[rehypeSanitize]] }} // https://www.npmjs.com/package/@uiw/react-md-editor#security
               height={400}
               preview="edit" // Có 3 giá trị để set tùy nhu cầu ['edit', 'live', 'preview']
-              // hideToolbar={true}
+            // hideToolbar={true}
             />
           </Box>
           <Button
@@ -78,7 +64,7 @@ function CardDescriptionMdEditor() {
               style={{
                 whiteSpace: 'pre-wrap',
                 padding: cardDescription ? '10px' : '0px',
-                border:  cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
+                border: cardDescription ? '0.5px solid rgba(0, 0, 0, 0.2)' : 'none',
                 borderRadius: '8px'
               }}
             />

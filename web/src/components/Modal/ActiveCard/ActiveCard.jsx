@@ -34,10 +34,10 @@ import CardUserGroup from './CardUserGroup'
 
 import { styled } from '@mui/material/styles'
 import { useDispatch, useSelector } from 'react-redux'
+import { updateCardDetailsAPI } from '~/apis'
+import { updatedCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { clearCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 import { singleFileValidator } from '~/Utils/validators'
-import { updateCardDetailsAPI } from '~/apis'
-import { title } from '@uiw/react-md-editor'
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -74,11 +74,17 @@ function ActiveCard() {
 
     dispath(updateCurrentActiveCard(updateCard))
 
+    dispath(updatedCardInBoard(updateCard))
+
     return updateCard
   }
 
   const onUpdateCardTitle = (newTitle) => {
     callApiUpdateCard({ title: newTitle.trim() })
+  }
+
+  const onUpdateCardDescription = (description) => {
+    callApiUpdateCard({ description: description })
   }
 
   const onUploadCardCover = (event) => {
@@ -91,7 +97,14 @@ function ActiveCard() {
     let reqData = new FormData()
     reqData.append('cardCover', event.target?.files[0])
 
-    // Gọi API...
+    toast.promise(
+      callApiUpdateCard(reqData),
+      {
+        pending: 'Uploading card cover...',
+        success: 'Card cover uploaded successfully',
+        error: 'Failed to upload card cover'
+      }
+    )
   }
 
   return (
@@ -160,7 +173,10 @@ function ActiveCard() {
               </Box>
 
               {/* Feature 03: Xử lý mô tả của Card */}
-              <CardDescriptionMdEditor />
+              <CardDescriptionMdEditor
+                cardDescriptionProps={activeCard?.description}
+                handleUpdateCardDescription={onUpdateCardDescription}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>
