@@ -7,12 +7,16 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import { useDispatch } from 'react-redux';
+import { updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice';
 
 export const TrelloCard = ({ card }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card._id,
     data: { ...card }
   });
+
+  const dispath = useDispatch()
 
   const dndKitCardStyle = {
     touchAction: 'none',
@@ -21,9 +25,11 @@ export const TrelloCard = ({ card }) => {
     opacity: isDragging ? 0.5 : undefined,
     border: isDragging ? '1px solid #3498db' : undefined,
   };
+
   return (
     <Card
       ref={setNodeRef}
+      onClick={() => dispath(updateCurrentActiveCard(card))}
       style={dndKitCardStyle} {...attributes} {...listeners}
       sx={{
         maxWidth: 345,
@@ -32,7 +38,8 @@ export const TrelloCard = ({ card }) => {
         opacity: card.FE_PlaceholderCard ? '0' : '1',
         minWidth: card.FE_PlaceholderCard ? '280px' : 'unset',
         pointerEvents: card.FE_PlaceholderCard ? 'none' : 'unset',
-        position: card.FE_PlaceholderCard ? 'fixed' : 'unset'
+        position: card.FE_PlaceholderCard ? 'fixed' : 'unset',
+        cursor: 'pointer'
       }}>
 
       {card.cover ? (

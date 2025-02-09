@@ -1,12 +1,10 @@
+import FilterListIcon from '@mui/icons-material/FilterList';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import MoreOption from './MoreOption/MoreOption';
+import BoardUserGroup from './BoardUserGroup';
 
 const MENU_STYLE = {
   '&:hover': {
@@ -74,29 +72,8 @@ export const BoardBar = ({ mocData }) => {
 
         </Tooltip>
 
-        <AvatarGroup max={3} sx={{
-          '& .MuiAvatar-root': {
-            width: 30,
-            height: 30,
-            cursor: 'pointer',
-            '&:first-of-type': {
-              bgcolor: 'grey'
-            }
-          },
-        }}>
-          <Tooltip title="a">
-            <Avatar alt="A" src="/static/images/avatar/1.jpg" />
-          </Tooltip>
-
-          <Tooltip title="B">
-            <Avatar alt="B" src="/static/images/avatar/1.jpg" />
-          </Tooltip>
-          <Tooltip title="C">
-            <Avatar alt="C" src="/static/images/avatar/1.jpg" />
-          </Tooltip> <Tooltip title="D">
-            <Avatar alt="D" src="/static/images/avatar/1.jpg" />
-          </Tooltip>
-        </AvatarGroup>
+        {/* handle show user in board */}
+        <BoardUserGroup />
 
         <Box>
           <Tooltip title="Share">
@@ -109,8 +86,6 @@ export const BoardBar = ({ mocData }) => {
           </Tooltip>
 
         </Box>
-
-        <MoreOption />
       </Box>
     </Box>
   )

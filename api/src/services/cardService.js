@@ -22,7 +22,24 @@ const createNewCard = async (reqBody) => {
   }
 }
 
+const update = async (cardId, reqBody) => {
+  try {
+
+    const updatedCard = {
+      ...reqBody,
+      updatedAt: Date.now()
+    }
+
+    const getNewCard = await cardModal.update(cardId, updatedCard)
+
+    return getNewCard
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+  }
+}
+
 
 export const cardService = {
-  createNewCard
+  createNewCard,
+  update
 }

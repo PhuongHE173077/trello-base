@@ -11,5 +11,7 @@ Router.route('/')
     res.status(StatusCodes.OK).json({ message: 'get columns successfully !' })
   })
   .post(authMiddlewares.isAuthorized, cardValidation.createNewCard, cardConroller.createNewCard)
+Router.route('/:id')
+  .put(authMiddlewares.isAuthorized, cardValidation.update, cardConroller.update)
 
 export const cardRoutes = Router

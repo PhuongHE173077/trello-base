@@ -41,8 +41,9 @@ export const createNewCardAPI = async (cardData) => {
   return await axios.post(`v1/cards`, cardData)
 }
 
-
-
+export const updateCardDetailsAPI = async (cardId, updatedCard) => {
+  return await axios.put(`v1/cards/${cardId}`, updatedCard)
+}
 
 //User API
 export const registerUserAPI = async (userData) => {

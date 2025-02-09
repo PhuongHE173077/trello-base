@@ -13,11 +13,16 @@ import { AppBar } from '../../components/AppBar';
 import { BoardBar } from './BoardBar/BoardBar';
 import { BoardContent } from './BoardContent/BoardContent';
 import { PageLoading } from '~/components/Loading/PageLoading';
+import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard';
+import { selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice';
+
 export const Board = () => {
 
   const dispath = useDispatch()
 
   const board = useSelector(selectCurrentActiveBoard)
+
+  const card = useSelector(selectCurrentActiveCard)
 
   const { boardId } = useParams()
 
@@ -76,6 +81,9 @@ export const Board = () => {
   return (
 
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+      {card && <ActiveCard />}
+
+
       <AppBar />
       <BoardBar mocData={board} />
       <BoardContent
