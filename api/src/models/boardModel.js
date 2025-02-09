@@ -38,10 +38,16 @@ const validateBeforeCreate = async (data) => {
 }
 
 
-const createNewBoard = async (data) => {
+const createNewBoard = async (userId, data) => {
   try {
     const validData = await validateBeforeCreate(data)
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
+
+    const newBoardData = {
+      ...validData,
+      ownerIds: [new ObjectId(userId)]
+    }
+
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardData)
   } catch (error) {
     throw new Error(error)
   }
