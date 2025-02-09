@@ -1,12 +1,21 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
+import { mapOrder } from '~/Utils/sortArrayByotherArray';
+import ToggleFocusInput from '~/components/Form/ToggleFocusInput';
 import MoreOption from '~/pages/Boards/BoardBar/MoreOption/MoreOption';
 import { ListCard } from './ListCard/ListCard';
-import { mapOrder } from '~/Utils/sortArrayByotherArray';
+import { updateColumDetalsAPI } from '~/apis';
+import { useDispatch, useSelector } from 'react-redux';
+import { cloneDeep } from 'lodash';
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
 
 export const Column = ({ column }) => {
   const cardOrder = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+
+  const dispatch = useDispatch()
+
+  const board = useSelector(selectCurrentActiveBoard)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
@@ -23,6 +32,21 @@ export const Column = ({ column }) => {
   };
 
 
+  const onUpdateColumTitle = (newTitle) => {
+    console.log("🚀 ~ onUpdateColumTitle ~ newTitle:", newTitle)
+
+
+    updateColumDetalsAPI(column._id, { title: newTitle })
+
+    const newBoard = cloneDeep(board)
+
+    const columnUpdate = newBoard.columns.find(c => c._id.toString() == column._id)
+
+    columnUpdate.title = newTitle
+
+    dispatch(updateCurrentActiveBoard(newBoard))
+
+  }
 
 
   return (
@@ -51,13 +75,8 @@ export const Column = ({ column }) => {
             ml: 1,
             justifyContent: 'space-between'
           }}>
-          <Typography
-            sx={{
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: "1rem"
-            }}
-          >{column?.title}</Typography>
+
+          <ToggleFocusInput value={column?.title} onChangedValue={onUpdateColumTitle} />
 
           <MoreOption column={column} />
         </Box>

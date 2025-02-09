@@ -4,7 +4,8 @@ import { boardService } from "~/services/boardService"
 
 const createNewBoard = async (req, res, next) => {
   try {
-    const createBoard = await boardService.createNewBoard(req.body)
+    const userId = req.jwtDecoded._id
+    const createBoard = await boardService.createNewBoard(userId, req.body)
     res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {
     next(error)

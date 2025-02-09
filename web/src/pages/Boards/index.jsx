@@ -21,6 +21,7 @@ import { styled } from '@mui/material/styles'
 import { AppBar } from '~/components/AppBar'
 import { fetchBoardsAPI } from '~/apis'
 import { DEFAULT_ITEMS_PER_PAGE } from '~/Utils/constants'
+import { CircularProgress } from '@mui/material'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -62,12 +63,19 @@ function Boards() {
             })
     }, [location.search])
 
+    const afterCreateNewBoard = () => {
+        fetchBoardsAPI(location.search)
+            .then(res => {
+                setBoards(res.boards || [])
+                setTotalBoards(res.totalBoards || 0)
+            })
+    }
 
-    console.log('boards: ', boards);
-    console.log('totalBoards: ', totalBoards);
+
     // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
     if (!boards) {
-        return
+        return <CircularProgress />
+
     }
 
 
@@ -93,23 +101,16 @@ function Boards() {
                         </Stack>
                         <Divider sx={{ my: 1 }} />
                         <Stack direction="column" spacing={1}>
-                            <SidebarCreateBoardModal />
+                            <SidebarCreateBoardModal afterCreateNewBoard={afterCreateNewBoard} />
                         </Stack>
                     </Grid>
-
 
                     <Grid xs={12} sm={9} >
                         <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>Your boards:</Typography>
 
-
-
-
                         {boards?.length === 0 &&
                             <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>No result found!</Typography>
                         }
-
-
-
 
                         {boards?.length > 0 &&
                             <Grid container spacing={2}>

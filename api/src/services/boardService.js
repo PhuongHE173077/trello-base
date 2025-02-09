@@ -8,14 +8,14 @@ import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "~/utils/constants"
 import { slugify } from "~/utils/slugify"
 
 
-const createNewBoard = async (reqBody) => {
+const createNewBoard = async (userId, reqBody) => {
   try {
     const newBoard = {
       ...reqBody,
       slug: slugify(reqBody.title)
     }
 
-    const createdBoard = await boardModal.createNewBoard(newBoard)
+    const createdBoard = await boardModal.createNewBoard(userId, newBoard)
 
     const getNewBoard = await boardModal.findOneById(createdBoard.insertedId)
 

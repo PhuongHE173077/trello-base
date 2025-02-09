@@ -62,8 +62,7 @@ const pushCardOrderIds = async (card) => {
 
 const update = async (columnId, updatedData) => {
   try {
-    console.log('updatedData', updatedData)
-    if (updatedData.cardOrderIds.length > 0) {
+    if (updatedData.cardOrderIds && updatedData.cardOrderIds.length > 0) {
       updatedData.cardOrderIds = updatedData.cardOrderIds.map(id => new ObjectId(id))
     }
     const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
