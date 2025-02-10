@@ -1,16 +1,30 @@
 import { ObjectId } from "mongodb"
 import { GET_DB } from "~/config/mongodb"
+import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "~/utils/validators"
 
 const Joi = require("joi")
 const { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } = require("./validators")
 
 const CARD_COLLECTION_NAME = 'cards'
 const CARD_COLLECTION_SCHEMA = Joi.object({
-  boardId: Joi.string().min(3).max(50).pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
+  boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
   columnId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
 
   title: Joi.string().min(3).max(50).trim().strict().required(),
   description: Joi.string().min(5).max(250).trim().strict(),
+
+  cover: Joi.string().default(null),
+  memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
+  comments: Joi.array().items({
+    userId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+    userEmail: Joi.string().pattern(EMAIL_RULE).message(EMAIL_RULE_MESSAGE),
+    userAvatar: Joi.string(),
+    userDisplayName: Joi.string().min(3).max(50).trim().strict(),
+    comment: Joi.string().min(5).max(250).trim().strict(),
+
+    createdAt: Joi.date().timestamp()
+  }).default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
