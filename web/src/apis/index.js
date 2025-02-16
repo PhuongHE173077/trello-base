@@ -11,7 +11,15 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
   return await axios.put(`v1/boards/${boardId}`, updateData)
 }
 
-export const createNewBoardAPI = async (boardData) => {
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Creates a new board by sending a POST request to the server.
+ * 
+ * @param {Object} boardData - The data of the board to be created.
+ * @returns {Promise} - A promise that resolves with the server's response.
+ */
+
+/******  580cfdef-eb4f-4c98-bd50-3d3d139e1cea  *******/export const createNewBoardAPI = async (boardData) => {
   return await axios.post(`v1/boards`, boardData)
 }
 
@@ -62,4 +70,10 @@ export const verifyUserAPI = async (data) => {
 
 export const refreshTokenAPI = async () => {
   return await axios.get(`v1/users/refresh_token`)
+}
+
+// invitation Api
+
+export const createNewInvitationAPI = async (data) => {
+  return await axios.post(`v1/invitations/board`, data)
 }

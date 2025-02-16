@@ -74,6 +74,19 @@ const update = async (cardId, updatedData) => {
 
 }
 
+const unshiftNewComment = async (cardId, newComment) => {
+  try {
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      { $push: { comments: { $each: [newComment], $position: 0 } } },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const deleteCardInColumn = async (columnId) => {
   try {
     return await GET_DB().collection(CARD_COLLECTION_NAME).deleteMany({ columnId: new ObjectId(columnId) })
@@ -89,5 +102,6 @@ export const cardModal = {
   createNewCard,
   findOneById,
   update,
-  deleteCardInColumn
+  deleteCardInColumn,
+  unshiftNewComment
 }

@@ -1,3 +1,4 @@
+
 import { StatusCodes } from "http-status-codes"
 import { cardModal } from "~/models/cardModal"
 import { columnModal } from "~/models/columnModal"
@@ -23,7 +24,7 @@ const createNewCard = async (reqBody) => {
   }
 }
 
-const update = async (cardId, reqBody, cardCoverFile) => {
+const update = async (cardId, reqBody, cardCoverFile, userInfor) => {
   try {
 
     const updatedCard = {
@@ -35,7 +36,18 @@ const update = async (cardId, reqBody, cardCoverFile) => {
       const resultUpload = await cloudinaryProvider.streamUpload(cardCoverFile.buffer, 'cards')
 
       getNewCard = await cardModal.update(cardId, { cover: resultUpload.secure_url })
-    } else {
+    } else if (updatedCard.commentToAdd) {
+
+      const commentToAdd = {
+        ...updatedCard.commentToAdd,
+        createdAt: Date.now(),
+        userId: userInfor._id,
+        userEmail: userInfor.email
+      }
+      getNewCard = await cardModal.unshiftNewComment(cardId, commentToAdd)
+    }
+
+    else {
       getNewCard = await cardModal.update(cardId, updatedCard)
 
     }

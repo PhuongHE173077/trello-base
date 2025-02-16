@@ -61,9 +61,7 @@ export const TrelloCard = ({ card }) => {
         <Typography gutterBottom variant="h7" component="div">
           {card?.title}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {card?.description}
-        </Typography>
+
       </CardContent>
 
 

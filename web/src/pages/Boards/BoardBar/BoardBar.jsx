@@ -5,6 +5,9 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import BoardUserGroup from './BoardUserGroup';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useState } from 'react';
+import CustomizedDialogs from '~/components/Modal/Dialog/CustomizedDialogs';
 
 const MENU_STYLE = {
   '&:hover': {
@@ -17,8 +20,7 @@ const MENU_STYLE = {
   border: "none",
 }
 export const BoardBar = ({ mocData }) => {
-  // console.log(mocData);
-
+  const [open, setOpen] = useState(false);
   return (
     <Box
       sx={{
@@ -73,20 +75,23 @@ export const BoardBar = ({ mocData }) => {
         </Tooltip>
 
         {/* handle show user in board */}
-        <BoardUserGroup />
+        <BoardUserGroup boardUsers={mocData?.fnMembers} />
 
-        <Box>
-          <Tooltip title="Share">
+        <Box sx={{ marginX: '10px' }}>
+          <Tooltip title="Share" onClick={() => { setOpen(true) }}>
             <Button sx={{
               backgroundColor: '#ffffff',
               '&:hover': {
                 backgroundColor: '#FFFFFF',
               }
-            }}>Share</Button>
+            }}
+              startIcon={<PersonAddIcon />}
+            >Share</Button>
           </Tooltip>
 
         </Box>
       </Box>
+      <CustomizedDialogs open={open} setOpen={setOpen} />
     </Box>
   )
 }
