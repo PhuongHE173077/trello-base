@@ -57,6 +57,8 @@ export const activeboardSlice = createSlice({
       //action.payload là cài return dữ liêụ ở hàm fetchBoardDetailsAPI
       let board = action.payload
 
+      board.fnMembers = board.owners.concat(board.members)
+
       board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
       board.columns.forEach(element => {
         if (isEmpty(element.cards)) {

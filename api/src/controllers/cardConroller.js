@@ -19,7 +19,9 @@ const update = async (req, res, next) => {
 
     const cardCoverFile = req.file
 
-    const createBoard = await cardService.update(cardId, req.body, cardCoverFile)
+    const userInfor = req.jwtDecoded
+
+    const createBoard = await cardService.update(cardId, req.body, cardCoverFile, userInfor)
 
     res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {

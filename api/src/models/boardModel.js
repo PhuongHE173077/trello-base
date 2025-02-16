@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb"
 import { BOARD_TYPES } from "~/utils/constants"
 import { columnModal } from "./columnModal"
 import { cardModal } from "./cardModal"
+import { userModal } from "./userModal"
 
 
 const Joi = require("joi")
@@ -96,7 +97,34 @@ const getDetail = async (userId, boardId) => {
             foreignField: 'boardId',
             as: 'cards'
           }
-        }
+        },
+        {
+          $lookup: {
+            from: userModal.USER_COLLECTION_NAME,
+            localField: 'ownerIds',
+            foreignField: '_id',
+            as: 'owners',
+
+
+            pipeline: [{
+              $project: { 'password': 0, 'verifyToken': 0 }
+            }]
+          }
+        },
+        {
+          $lookup: {
+            from: userModal.USER_COLLECTION_NAME,
+            localField: 'memberIds',
+            foreignField: '_id',
+            as: 'members',
+
+
+            pipeline: [{
+              $project: { 'password': 0, 'verifyToken': 0 }
+            }]
+          }
+        },
+
       ]).toArray()
       return result[0] || null
     } catch (error) {

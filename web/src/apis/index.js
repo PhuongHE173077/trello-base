@@ -63,3 +63,9 @@ export const verifyUserAPI = async (data) => {
 export const refreshTokenAPI = async () => {
   return await axios.get(`v1/users/refresh_token`)
 }
+
+// invitation Api
+
+export const createNewInvitationAPI = async (data) => {
+  return await axios.post(`v1/invitations/board`, data)
+}
