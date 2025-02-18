@@ -12,10 +12,10 @@ export const fetchInvitationsAPI = createAsyncThunk(
   }
 )
 
-export const updateBoardInvitation = createAsyncThunk(
+export const updateBoardInvitationStatus = createAsyncThunk(
   'notifications/updateBoardInvitation',
-  async ({ notificationId, status }) => {
-    return await axios.put(`v1/invitations/board/${notificationId}`, { status })
+  async ({ invitaionId, status }) => {
+    return await axios.put(`v1/invitations/board/${invitaionId}`, { status })
   }
 )
 
@@ -45,8 +45,11 @@ export const notificationsSlice = createSlice({
 
       state.currentNotification = Array.isArray(imcommingInvitations) ? imcommingInvitations.reverse() : []
     })
-    builder.addCase(updateBoardInvitation.fulfilled, (state, action) => {
-      state.currentNotification = action.payload
+    builder.addCase(updateBoardInvitationStatus.fulfilled, (state, action) => {
+      const incommingInvitation = action.payload
+
+      const getInvitation = state.currentNotification.find(invitation => invitation._id === incommingInvitation._id)
+      getInvitation.boardInvatation = incommingInvitation
     })
   }
 })

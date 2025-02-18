@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
-import moment from 'moment'
-import Badge from '@mui/material/Badge'
+import DoneIcon from '@mui/icons-material/Done'
+import GroupAddIcon from '@mui/icons-material/GroupAdd'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import NotInterestedIcon from '@mui/icons-material/NotInterested'
+import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
+import Divider from '@mui/material/Divider'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Divider from '@mui/material/Divider'
-import GroupAddIcon from '@mui/icons-material/GroupAdd'
-import DoneIcon from '@mui/icons-material/Done'
-import NotInterestedIcon from '@mui/icons-material/NotInterested'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchInvitationsAPI, selectCurrentNotification } from '~/redux/notification/notificationsSlice'
+import { fetchInvitationsAPI, selectCurrentNotification, updateBoardInvitationStatus } from '~/redux/notification/notificationsSlice'
 import { BOARD_INVITATION_STATUS } from '~/Utils/constants'
 
 
@@ -39,8 +39,12 @@ function Notifications() {
     setAnchorEl(null)
   }
 
-  const updateBoardInvitation = (status) => {
-    console.log('status: ', status)
+  const updateBoardInvitation = (invitaionId, status) => {
+    dispath(updateBoardInvitationStatus({ invitaionId, status }))
+      .then(() => {
+        console.log(status);
+
+      })
   }
 
   return (
@@ -94,7 +98,7 @@ function Notifications() {
                       variant="contained"
                       color="success"
                       size="small"
-                      onClick={() => updateBoardInvitation(BOARD_INVITATION_STATUS.ACCEPTED)}
+                      onClick={() => updateBoardInvitation(notification._id, BOARD_INVITATION_STATUS.ACCEPTED)}
                     >
                       Accept
                     </Button>
@@ -109,11 +113,7 @@ function Notifications() {
                       Reject
                     </Button>
                   </Box>
-
-
-
                 }
-
 
                 {/* Khi Status của thông báo này là ACCEPTED hoặc REJECTED thì sẽ hiện thông tin đó lên */}
                 <Box Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end' }}>
