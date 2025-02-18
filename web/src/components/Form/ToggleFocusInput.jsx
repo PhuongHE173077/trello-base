@@ -50,6 +50,9 @@ function ToggleFocusInput({ value, onChangedValue, inputFontSize = '16px', ...pr
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis'
+        },
+        '& .MuiInputBase-input': {
+          color: 'black'
         }
       }}
     />

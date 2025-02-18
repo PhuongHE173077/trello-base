@@ -100,7 +100,7 @@ export default function CustomizedDialogs({ open, setOpen }) {
 
               <TextField select value={role} size="small" onChange={(e) => setRole(e.target.value)}>
                 <MenuItem value="member">MEMBER</MenuItem>
-                <MenuItem value="admin">ADMIN </MenuItem>
+                <MenuItem value="oberse">ADMIN </MenuItem>
               </TextField>
               <Button variant="contained" type='submit'>Invite</Button>
             </Box>

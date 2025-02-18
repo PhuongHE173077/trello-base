@@ -2,6 +2,8 @@ import { ObjectId } from "mongodb"
 import { GET_DB } from "~/config/mongodb"
 import { BOARD_INVITATION_STATUS, BOARD_TYPES, INVITATION_TYPE } from "~/utils/constants"
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "./validators"
+import { userModal } from "./userModal"
+import { boardModal } from "./boardModel"
 
 
 const Joi = require("joi")
@@ -20,8 +22,8 @@ const INVITATION_COLLECTION_SCHEMA = Joi.object({
   }).optional(),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
-  updatedAt: Joi.date().timestamp('javascript').default(null)
-
+  updatedAt: Joi.date().timestamp('javascript').default(null),
+  _destroy: Joi.boolean().default(false)
 })
 
 
@@ -62,11 +64,69 @@ const findOneById = async (id) => {
   }
 }
 
+const findByUserId = async (userId) => {
+  try {
+    try {
+      const queryCondtion = [
+        { inviteeId: new ObjectId(userId) },
+        { _destroy: false }
+      ]
+
+
+      const results = await GET_DB().collection(INVITATION_COLLECTION_NAME).aggregate([
+        {
+          $match: { $and: queryCondtion }
+        },
+        {
+          $lookup: {
+            from: userModal.USER_COLLECTION_NAME,
+            localField: 'inviterId',
+            foreignField: '_id',
+            as: 'inviter',
+
+
+            pipeline: [{
+              $project: { 'password': 0, 'verifyToken': 0 }
+            }]
+          }
+        },
+        {
+          $lookup: {
+            from: userModal.USER_COLLECTION_NAME,
+            localField: 'inviteeId',
+            foreignField: '_id',
+            as: 'invitee',
+
+            pipeline: [{
+              $project: { 'password': 0, 'verifyToken': 0 }
+            }]
+          }
+        },
+        {
+          $lookup: {
+            from: boardModal.BOARD_COLLECTION_NAME,
+            localField: 'boardInvatation.boardId',
+            foreignField: '_id',
+            as: 'board'
+          }
+        }
+      ]).toArray()
+      return results
+    } catch (error) {
+      throw new Error(error)
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+
 
 
 export const invitationModal = {
   INVITATION_COLLECTION_NAME,
   INVITATION_COLLECTION_SCHEMA,
   createNewInvitation,
-  findOneById
+  findOneById,
+  findByUserId
 }

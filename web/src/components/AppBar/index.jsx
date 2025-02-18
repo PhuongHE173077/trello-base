@@ -1,18 +1,17 @@
-import { Badge, Box, InputAdornment, SvgIcon, TextField, Typography } from '@mui/material'
-import { ModalSelect } from '../ModeSelect'
+import AppsIcon from '@mui/icons-material/Apps';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, InputAdornment, SvgIcon, TextField, Typography } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 import { ReactComponent as TrelloIcon } from '~/assets/Trello.svg';
-import { Workspaces } from './Menus/Workspaces';
+import { ModalSelect } from '../ModeSelect';
+import Create from './Menus/Create';
+import Profile from './Menus/Profile';
 import { Recent } from './Menus/Recent';
 import { Starred } from './Menus/Starred';
 import { Template } from './Menus/Template';
-import Create from './Menus/Create';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import Tooltip from '@mui/material/Tooltip';
-import { red } from '@mui/material/colors';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import Profile from './Menus/Profile';
-import AppsIcon from '@mui/icons-material/Apps';
-import SearchIcon from '@mui/icons-material/Search';
+import { Workspaces } from './Menus/Workspaces';
+import Notifications from './Notifications/Notifications';
 export const AppBar = () => {
   return (
     <Box
@@ -68,15 +67,7 @@ export const AppBar = () => {
 
         <ModalSelect />
 
-        <Tooltip title="Delete">
-          <Badge color='warning' badgeContent={2}
-            sx={{
-              color: red[500]
-            }}
-          >
-            <NotificationsNoneOutlinedIcon sx={{ color: 'primary.main' }} color="action" />
-          </Badge>
-        </Tooltip>
+        <Notifications />
 
         <Tooltip title="Delete">
           <HelpOutlineIcon />

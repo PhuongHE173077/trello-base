@@ -30,8 +30,6 @@ const createNew = async (inviterId, reqBody) => {
         status: BOARD_INVITATION_STATUS.PENDING
       }
     }
-    console.log("🚀 ~ createNew ~ newInvitation:", newInvitation)
-
 
     const createNewInvitation = await invitationModal.createNewInvitation(newInvitation)
 
@@ -50,8 +48,28 @@ const createNew = async (inviterId, reqBody) => {
   }
 }
 
+const getInvitations = async (userId) => {
+  try {
+    const getInvitations = await invitationModal.findByUserId(userId)
+
+    const resInvitation = getInvitations.map(invitation => {
+      return {
+        ...invitation,
+        inviter: invitation.inviter[0],
+        invitee: invitation.invitee[0],
+        board: invitation.board[0]
+      }
+    })
+
+
+    return resInvitation
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+  }
+}
+
 
 export const invitationService = {
-  createNew
-
+  createNew,
+  getInvitations
 }
