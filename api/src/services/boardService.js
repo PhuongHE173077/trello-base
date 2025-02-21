@@ -30,7 +30,7 @@ const getDetail = async (userId, boardId) => {
   try {
     const board = await boardModal.getDetail(userId, boardId)
     if (!board) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'The Board Not found')
+      throw new ApiError(StatusCodes.CONFLICT, 'The Board Not found')
     }
     const resBoard = cloneDeep(board)
 

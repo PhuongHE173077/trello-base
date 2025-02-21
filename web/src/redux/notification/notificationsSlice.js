@@ -19,6 +19,7 @@ export const updateBoardInvitationStatus = createAsyncThunk(
   }
 )
 
+
 export const notificationsSlice = createSlice({
   name: 'notifications',
   initialState,

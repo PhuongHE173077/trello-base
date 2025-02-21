@@ -19,6 +19,12 @@ const createNew = async (inviterId, reqBody) => {
       throw new ApiError(StatusCodes.NOT_IMPLEMENTED, 'The Inviter or Invitee or Board not found')
     }
 
+    const boardOwnerAndMemberIds = [...board.ownerIds, ...board.memberIds].toString()
+
+    if (boardOwnerAndMemberIds.includes(invitee._id.toString())) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invitee already in board!')
+    }
+
     const newInvitation = {
       inviterId,
       inviteeId: invitee._id.toString(),
@@ -68,8 +74,45 @@ const getInvitations = async (userId) => {
   }
 }
 
+const updateInvitation = async (userId, invitationId, status) => {
+  console.log("🚀 ~ updateInvitation ~ status:", status)
+  try {
+    //
+    const getInvitations = await invitationModal.findOneById(invitationId)
+    console.log("🚀 ~ updateInvitation ~ getInvitations:", getInvitations)
+
+    if (!getInvitations) throw new ApiError(StatusCodes.NOT_FOUND, 'Invitation not found!')
+
+    const boardId = getInvitations.boardInvatation.boardId
+
+    const board = await boardModal.findOneById(boardId)
+
+    if (!board) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
+
+    const updateData = {
+      boardInvatation: {
+        ...getInvitations.boardInvatation,
+        status: status.status
+      }
+    }
+
+
+
+    const updateInvitation = await invitationModal.updateInvitation(invitationId, updateData)
+
+    if (status.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+      await boardModal.pushMemberIds(boardId, userId)
+    }
+
+    return updateInvitation
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
+  }
+}
+
 
 export const invitationService = {
   createNew,
-  getInvitations
+  getInvitations,
+  updateInvitation
 }

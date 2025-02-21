@@ -30,7 +30,7 @@ export const AppBar = () => {
 
         <SvgIcon component={TrelloIcon} inheritViewBox fontSize='medium' sx={{ color: 'primary.main' }} />
 
-        <Typography variant='span' sx={{ fontSize: '20px', fontWeight: 'bold', color: 'primary.main' }}> Trello</Typography>
+        <Typography variant='span' sx={{ fontSize: '20px', fontWeight: 'bold', color: 'primary.main', cursor: 'pointer' }} onClick={() => window.location.href = '/boards'}> Trello</Typography>
 
         <Box sx={{ display: { xs: "none", md: 'flex' }, gap: 1 }}>
           <Workspaces />

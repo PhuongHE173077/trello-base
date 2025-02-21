@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { createNewInvitationAPI } from '~/apis';
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
+import { selectCurrentUser } from '~/redux/user/userSlice';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -35,6 +36,8 @@ export default function CustomizedDialogs({ open, setOpen }) {
   const [role, setRole] = React.useState('member')
 
   const activeBoard = useSelector(selectCurrentActiveBoard)
+
+  const currentUser = useSelector(selectCurrentUser)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -156,7 +159,19 @@ export default function CustomizedDialogs({ open, setOpen }) {
                         </Box>
                         <TextField select value='member' size="small">
                           <MenuItem value="member">MEMBER</MenuItem>
-                          <MenuItem value="owner" disabled>ADMIN </MenuItem>
+                          {activeBoard?.ownerIds?.includes(currentUser?._id) ?
+                            <>
+                              <MenuItem value="oberse">ADMIN </MenuItem>
+                              <MenuItem value="oberse" >
+                                <Box>
+                                  <Typography variant='body2' >Remove</Typography>
+                                  <Typography variant='caption'>Remove member from board</Typography>
+                                </Box>
+                              </MenuItem>
+                            </>
+                            :
+                            <MenuItem value="owner" disabled>ADMIN </MenuItem>
+                          }
                         </TextField>
                       </Box>
                     ))

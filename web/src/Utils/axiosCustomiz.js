@@ -52,7 +52,7 @@ instance.interceptors.response.use(function (response) {
         axiosRuduxStore.dispatch(logoutUserAPI(false))
     }
 
-    if (error?.response?.status === 404) {
+    if (error?.response?.status === 409) {
         //
         axiosRuduxStore.dispatch(reloadBoard())
     }

@@ -66,7 +66,6 @@ const logout = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    console.log(req.cookies?.refreshToken)
 
 
     const result = await userService.refreshToken(req.cookies?.refreshToken)

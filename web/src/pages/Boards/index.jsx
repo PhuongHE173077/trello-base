@@ -22,6 +22,7 @@ import { AppBar } from '~/components/AppBar'
 import { fetchBoardsAPI } from '~/apis'
 import { DEFAULT_ITEMS_PER_PAGE } from '~/Utils/constants'
 import { CircularProgress } from '@mui/material'
+import randomColor from 'randomcolor'
 
 const SidebarItem = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -148,7 +149,7 @@ function Boards() {
                                                 to={`/boards/${b._id}`}
                                                 sx={{
                                                     height: '150px',
-                                                    backgroundColor: '#c7ecee',
+                                                    backgroundColor: randomColor(),
                                                     display: 'flex',
                                                     textDecoration: 'none',
                                                     color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),

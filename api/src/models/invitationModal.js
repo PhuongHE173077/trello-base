@@ -121,12 +121,28 @@ const findByUserId = async (userId) => {
 }
 
 
+const updateInvitation = async (id, data) => {
+  try {
+    const updatedData = {
+      ...data,
+      updatedAt: Date.now()
+    }
+    const invitation = await GET_DB().collection(INVITATION_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: updatedData },
+      { returnDocument: 'after' })
 
+    return invitation.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 
 export const invitationModal = {
   INVITATION_COLLECTION_NAME,
   INVITATION_COLLECTION_SCHEMA,
   createNewInvitation,
   findOneById,
-  findByUserId
+  findByUserId,
+  updateInvitation
 }

@@ -9,6 +9,10 @@ import { corsOptions } from './config/cors'
 import cookieParser from 'cookie-parser'
 var cors = require('cors')
 
+const http = require('http')
+const socketIo = require('socket.io')
+
+
 const START_SERVER = () => {
   const app = express()
 
@@ -31,7 +35,15 @@ const START_SERVER = () => {
   //middleware erro (allways in last)
   app.use(errorHandlingMiddleware)
 
-  app.listen(port, hostname, () => {
+  const server = http.createServer(app)
+
+  const io = socketIo(server, { cors: corsOptions })
+
+  io.on('connection', () => {
+    console.log('User connected')
+  })
+
+  server.listen(port, hostname, () => {
     // eslint-disable-next-line no-console
     console.log(`Hello ${env.AUTHOR}, I am running at http://${hostname}:${port}/`)
   })
