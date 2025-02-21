@@ -4,9 +4,10 @@ import { interceptorLoadingElements } from "./fomatter";
 import { logoutUserAPI } from "~/redux/user/userSlice";
 import { refreshTokenAPI } from "~/apis";
 import { reloadBoard } from "~/redux/activeBoard/activeBoardSlice";
+import { API_ROOT } from "./constants";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8017/',
+    baseURL: API_ROOT,
 });
 
 

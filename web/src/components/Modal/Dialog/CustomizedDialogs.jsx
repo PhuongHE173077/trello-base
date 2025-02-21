@@ -12,6 +12,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { createNewInvitationAPI } from '~/apis';
+import { socketIo } from '~/main';
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
 import { selectCurrentUser } from '~/redux/user/userSlice';
 
@@ -55,7 +56,12 @@ export default function CustomizedDialogs({ open, setOpen }) {
       // console.log();
 
       toast.promise(
-        createNewInvitationAPI({ inviteeEmail: email, role, boardId: activeBoard._id }),
+        createNewInvitationAPI({ inviteeEmail: email, role, boardId: activeBoard._id })
+          .then((invitation) => {
+            //sent socket to server to handle real-time
+            socketIo.emit('FE_INVITED_TO_BOARD', invitation)
+
+          }),
         {
           pending: 'Inviting... ',
           success: 'Invited successfully',

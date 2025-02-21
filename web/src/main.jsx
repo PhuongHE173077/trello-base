@@ -16,6 +16,12 @@ let persistor = persistStore(store);
 //inject store to use store in non-component files
 injectStore(store)
 
+import { io } from 'socket.io-client';
+import { API_ROOT } from './Utils/constants.js';
+
+export const socketIo = io(API_ROOT)
+
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter basename='/'>
     <Provider store={store}>

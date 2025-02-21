@@ -49,8 +49,10 @@ export const notificationsSlice = createSlice({
     builder.addCase(updateBoardInvitationStatus.fulfilled, (state, action) => {
       const incommingInvitation = action.payload
 
+
+
       const getInvitation = state.currentNotification.find(invitation => invitation._id === incommingInvitation._id)
-      getInvitation.boardInvatation = incommingInvitation
+      getInvitation.boardInvatation = incommingInvitation.boardInvatation
     })
   }
 })

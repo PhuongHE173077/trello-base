@@ -14,46 +14,78 @@ import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchInvitationsAPI, selectCurrentNotification, updateBoardInvitationStatus } from '~/redux/notification/notificationsSlice'
+import { useNavigate } from 'react-router-dom'
+import { socketIo } from '~/main'
+import { addNotification, fetchInvitationsAPI, selectCurrentNotification, updateBoardInvitationStatus } from '~/redux/notification/notificationsSlice'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 import { BOARD_INVITATION_STATUS } from '~/Utils/constants'
 
 
 
 function Notifications() {
   const [anchorEl, setAnchorEl] = useState(null)
+  const [newNotification, setNewNotification] = useState(false)
 
   const dispath = useDispatch();
   const notifications = useSelector(selectCurrentNotification)
 
+  const currentUser = useSelector(selectCurrentUser)
+
   useEffect(() => {
     dispath(fetchInvitationsAPI())
-  }, [dispath])
+
+    const onReceiverInvitation = (invitation) => {
+      if (invitation.inviteeId === currentUser._id) {
+        //
+        dispath(addNotification(invitation))
+
+        setNewNotification(true)
+      }
+
+    }
+
+    // listen event realtime from back-end return
+    socketIo.on('BE_INVITED_TO_BOARD', onReceiverInvitation)
+
+    //clean up event realtime
+    return () => {
+      socketIo.off('BE_INVITED_TO_BOARD', onReceiverInvitation)
+    }
+
+  }, [dispath, currentUser._id])
 
 
 
   const open = Boolean(anchorEl)
   const handleClickNotificationIcon = (event) => {
     setAnchorEl(event.currentTarget)
+    setNewNotification(false)
   }
   const handleClose = () => {
     setAnchorEl(null)
   }
 
+  const navigate = useNavigate()
+
   const updateBoardInvitation = (invitaionId, status) => {
     dispath(updateBoardInvitationStatus({ invitaionId, status }))
-      .then(() => {
-        console.log(status);
+      .then((res) => {
+        // console.log("🚀 ~ .then ~ res:", res)
+        if (res.payload.boardInvatation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+          navigate(`/boards/${res.payload.boardInvatation.boardId}`)
+        }
+
+
 
       })
   }
 
   return (
     <Box>
-      <Tooltip title="Notifications">
+      <Tooltip title="Notifications" >
         <Badge
           color="warning"
-          // variant="none"
-          variant="dot"
+          variant={newNotification ? 'dot' : 'none'}
           sx={{ cursor: 'pointer' }}
           id="basic-button-open-notification"
           aria-controls={open ? 'basic-notification-drop-down' : undefined}
@@ -108,7 +140,7 @@ function Notifications() {
                       variant="contained"
                       color="secondary"
                       size="small"
-                      onClick={() => updateBoardInvitation(BOARD_INVITATION_STATUS.REJECTED)}
+                      onClick={() => updateBoardInvitation(notification._id, BOARD_INVITATION_STATUS.REJECTED)}
                     >
                       Reject
                     </Button>

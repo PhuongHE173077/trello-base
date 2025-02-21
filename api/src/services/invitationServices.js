@@ -79,7 +79,6 @@ const updateInvitation = async (userId, invitationId, status) => {
   try {
     //
     const getInvitations = await invitationModal.findOneById(invitationId)
-    console.log("🚀 ~ updateInvitation ~ getInvitations:", getInvitations)
 
     if (!getInvitations) throw new ApiError(StatusCodes.NOT_FOUND, 'Invitation not found!')
 

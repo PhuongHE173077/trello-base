@@ -39,8 +39,10 @@ const START_SERVER = () => {
 
   const io = socketIo(server, { cors: corsOptions })
 
-  io.on('connection', () => {
-    console.log('User connected')
+  io.on('connection', (socket) => {
+    socket.on('FE_INVITED_TO_BOARD', (invitation) => {
+      socket.broadcast.emit('BE_INVITED_TO_BOARD', invitation)
+    })
   })
 
   server.listen(port, hostname, () => {
