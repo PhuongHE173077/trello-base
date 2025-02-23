@@ -12,9 +12,9 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { createNewInvitationAPI } from '~/apis';
-import { socketIo } from '~/main';
 import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
 import { selectCurrentUser } from '~/redux/user/userSlice';
+import { socketIo } from '~/socket';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -54,7 +54,7 @@ export default function CustomizedDialogs({ open, setOpen }) {
       toast.error('Please enter email')
     } else {
       // console.log();
-
+      //asa
       toast.promise(
         createNewInvitationAPI({ inviteeEmail: email, role, boardId: activeBoard._id })
           .then((invitation) => {

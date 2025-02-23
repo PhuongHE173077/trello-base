@@ -15,9 +15,9 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { socketIo } from '~/main'
 import { addNotification, fetchInvitationsAPI, selectCurrentNotification, updateBoardInvitationStatus } from '~/redux/notification/notificationsSlice'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import { socketIo } from '~/socket'
 import { BOARD_INVITATION_STATUS } from '~/Utils/constants'
 
 
@@ -74,9 +74,6 @@ function Notifications() {
         if (res.payload.boardInvatation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
           navigate(`/boards/${res.payload.boardInvatation.boardId}`)
         }
-
-
-
       })
   }
 
