@@ -38,6 +38,8 @@ import { updateCardDetailsAPI } from '~/apis'
 import { updatedCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { clearCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 import { singleFileValidator } from '~/Utils/validators'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { CARD_MEMBER_ACTION } from '~/Utils/constants'
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -64,6 +66,7 @@ function ActiveCard() {
   const dispath = useDispatch()
 
   const activeCard = useSelector(selectCurrentActiveCard)
+  const currentUser = useSelector(selectCurrentUser)
 
   const handleCloseModal = () => {
     dispath(clearCard())
@@ -202,10 +205,20 @@ function ActiveCard() {
             <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Add To Card</Typography>
             <Stack direction="column" spacing={1}>
               {/* Feature 05: Xử lý hành động bản thân user tự join vào card */}
-              <SidebarItem className="active">
-                <PersonOutlineOutlinedIcon fontSize="small" />
-                Join
-              </SidebarItem>
+              {!activeCard.memberIds.includes(currentUser._id) &&
+                <SidebarItem className="active" onClick={() => callApiUpdateCard({
+                  incomingMemberInfor: {
+                    userId: currentUser._id,
+                    action: CARD_MEMBER_ACTION.ADD
+                  }
+
+                })}>
+                  <PersonOutlineOutlinedIcon fontSize="small" />
+                  Join
+                </SidebarItem>
+
+              }
+
               {/* Feature 06: Xử lý hành động cập nhật ảnh Cover của Card */}
               <SidebarItem className="active" component="label">
                 <ImageOutlinedIcon fontSize="small" />
