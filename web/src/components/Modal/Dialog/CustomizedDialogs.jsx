@@ -9,10 +9,10 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { createNewInvitationAPI } from '~/apis';
-import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
+import { removeMemberBoardAPI, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice';
 import { selectCurrentUser } from '~/redux/user/userSlice';
 import { socketIo } from '~/socket';
 
@@ -39,6 +39,8 @@ export default function CustomizedDialogs({ open, setOpen }) {
   const activeBoard = useSelector(selectCurrentActiveBoard)
 
   const currentUser = useSelector(selectCurrentUser)
+
+  const dispath = useDispatch()
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -70,6 +72,15 @@ export default function CustomizedDialogs({ open, setOpen }) {
     }
   }
 
+  const handleRemoveMember = (memberId) => {
+    if (window.confirm('Are you sure you want to remove this member?')) {
+      const data = {
+        userId: memberId,
+        action: 'REMOVE'
+      }
+      dispath(removeMemberBoardAPI({ boardId: activeBoard._id, data }))
+    }
+  }
   return (
     <React.Fragment>
 
@@ -77,6 +88,7 @@ export default function CustomizedDialogs({ open, setOpen }) {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           Share board
@@ -168,10 +180,10 @@ export default function CustomizedDialogs({ open, setOpen }) {
                           {activeBoard?.ownerIds?.includes(currentUser?._id) ?
                             <>
                               <MenuItem value="oberse">ADMIN </MenuItem>
-                              <MenuItem value="oberse" >
+                              <MenuItem value="oberse" onClick={() => handleRemoveMember(member?._id)}>
                                 <Box>
                                   <Typography variant='body2' >Remove</Typography>
-                                  <Typography variant='caption'>Remove member from board</Typography>
+                                  <Typography variant='caption' sx={{ color: 'gray' }}>Remove member from board</Typography>
                                 </Box>
                               </MenuItem>
                             </>

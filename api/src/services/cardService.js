@@ -46,6 +46,9 @@ const update = async (cardId, reqBody, cardCoverFile, userInfor) => {
       }
       getNewCard = await cardModal.unshiftNewComment(cardId, commentToAdd)
     }
+    else if (updatedCard.incomingMemberInfor) {
+      getNewCard = await cardModal.updateMember(cardId, updatedCard.incomingMemberInfor)
+    }
 
     else {
       getNewCard = await cardModal.update(cardId, updatedCard)

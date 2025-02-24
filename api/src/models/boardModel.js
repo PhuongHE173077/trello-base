@@ -150,21 +150,31 @@ const pushColumnOrderIds = async (column) => {
 }
 
 const update = async (boardId, updatedData) => {
+  console.log("🚀 ~ update ~ updatedData:", updatedData)
   try {
     Object.keys(updatedData).forEach((fieldName) => {
       if (INVALID_UPDATE_FILEDS.includes(fieldName)) {
         delete updatedData[fieldName]
       }
     })
-    if (updatedData.columnOrderIds.length > 0) {
+    let result
+    if (updatedData.columnOrderIds && updatedData.columnOrderIds.length > 0) {
       updatedData.columnOrderIds = updatedData.columnOrderIds.map(id => new ObjectId(id))
     }
+    if (updatedData.action == 'REMOVE') {
+      result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+        { _id: new ObjectId(boardId) },
+        { $pull: { memberIds: new ObjectId(updatedData.userId) } },
+        { returnDocument: 'after' }
+      )
+    } else {
+      result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+        { _id: new ObjectId(boardId) },
+        { $set: updatedData },
+        { returnDocument: 'after' }
+      )
+    }
 
-    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
-      { _id: new ObjectId(boardId) },
-      { $set: updatedData },
-      { returnDocument: 'after' }
-    )
     return result.value
   } catch (error) {
     throw new Error(error)

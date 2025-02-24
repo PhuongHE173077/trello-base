@@ -15,6 +15,13 @@ export const fetchBoardDetailsAPI = createAsyncThunk(
   }
 )
 
+export const removeMemberBoardAPI = createAsyncThunk(
+  'activeBoard/removeMemberBoardAPI',
+  async ({ boardId, data }) => {
+    return await axios.put(`v1/boards/${boardId}`, data)
+  }
+)
+
 
 
 export const activeboardSlice = createSlice({
@@ -64,6 +71,20 @@ export const activeboardSlice = createSlice({
       });
 
       state.currentActiveBoard = board
+    })
+
+    builder.addCase(removeMemberBoardAPI.fulfilled, (state, action) => {
+      let incomingBoard = action.payload
+
+      state.currentActiveBoard.memberIds = incomingBoard.memberIds
+
+      state.currentActiveBoard.fnMembers = state.currentActiveBoard.fnMembers.filter(member => (incomingBoard.memberIds.includes(member._id) || incomingBoard.owners.includes(member._id)))
+
+      if (incomingBoard.memberIds.length > 0) {
+        state.currentActiveBoard.members = state.currentActiveBoard.members.filter(member => incomingBoard.memberIds.includes(member._id))
+      } else {
+        state.currentActiveBoard.members = []
+      }
     })
 
   }

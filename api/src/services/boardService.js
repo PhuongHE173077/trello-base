@@ -52,6 +52,7 @@ const update = async (boardId, data) => {
       ...data,
       updatedAt: Date.now()
     }
+
     const board = await boardModal.update(boardId, updatedData)
     return board
   } catch (error) {

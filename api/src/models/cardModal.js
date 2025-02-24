@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
 import { GET_DB } from "~/config/mongodb"
+import { CARD_MEMBER_ACTION } from "~/utils/constants"
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "~/utils/validators"
 
 const Joi = require("joi")
@@ -96,6 +97,30 @@ const deleteCardInColumn = async (columnId) => {
 
 }
 
+const updateMember = async (cardId, updatedData) => {
+  try {
+    let optionType = {}
+    if (updatedData.action === CARD_MEMBER_ACTION.REMOVE) {
+      optionType = { $pull: { memberIds: new ObjectId(updatedData.userId) } }
+    }
+
+    if (updatedData.action === CARD_MEMBER_ACTION.ADD) {
+      optionType = { $push: { memberIds: new ObjectId(updatedData.userId) } }
+    }
+
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      optionType,
+      { returnDocument: 'after' }
+    )
+
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+
+}
+
 export const cardModal = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -103,5 +128,6 @@ export const cardModal = {
   findOneById,
   update,
   deleteCardInColumn,
-  unshiftNewComment
+  unshiftNewComment,
+  updateMember
 }

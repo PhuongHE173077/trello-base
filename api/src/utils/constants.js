@@ -30,3 +30,8 @@ export const BOARD_INVITATION_STATUS = {
 export const INVITATION_TYPE = {
   BOARD_INVITATION: 'BOARD_INVITATION'
 }
+
+export const CARD_MEMBER_ACTION = {
+  ADD: 'ADD',
+  REMOVE: 'REMOVE'
+}

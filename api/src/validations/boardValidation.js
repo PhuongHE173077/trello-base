@@ -26,7 +26,6 @@ const update = async (req, res, next) => {
     description: Joi.string().min(5).max(200).trim().strict(),
     type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE)
   })
-  console.log('req:', req.body)
 
   try {
     await schema.validateAsync(req.body, {

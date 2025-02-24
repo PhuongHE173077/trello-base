@@ -24,5 +24,9 @@ Router.route('/supports/moving_cards')
   .put(authMiddlewares.isAuthorized, boardValidation.moveCardToDifferentColumn, boardController.moveCardToDifferentColumn)
 
 
+Router.route('/supports/moving_cards')
+
+  .put(authMiddlewares.isAuthorized, boardController.moveCardToDifferentColumn)
+
 export const boardRoutes = Router
 

@@ -43,7 +43,7 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 
 
 function Boards() {
-    const [boards, setBoards] = useState(null)
+    const [boards, setBoards] = useState([])
     const [totalBoards, setTotalBoards] = useState(null)
 
 

@@ -20,3 +20,9 @@ if (process.env.NODE_ENV === 'development') {
 
 export const API_ROOT = api_Root
 
+
+export const CARD_MEMBER_ACTION = {
+  ADD: 'ADD',
+  REMOVE: 'REMOVE'
+}
+
