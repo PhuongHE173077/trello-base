@@ -1,7 +1,6 @@
 import AppsIcon from '@mui/icons-material/Apps';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import SearchIcon from '@mui/icons-material/Search';
-import { Box, InputAdornment, SvgIcon, TextField, Typography } from '@mui/material';
+import { Box, SvgIcon, Typography } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { ReactComponent as TrelloIcon } from '~/assets/Trello.svg';
 import { ModalSelect } from '../ModeSelect';
@@ -12,6 +11,7 @@ import { Starred } from './Menus/Starred';
 import { Template } from './Menus/Template';
 import { Workspaces } from './Menus/Workspaces';
 import Notifications from './Notifications/Notifications';
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard';
 export const AppBar = () => {
   return (
     <Box
@@ -44,26 +44,7 @@ export const AppBar = () => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'primary.main' }}>
 
-        <TextField
-          id="outlined-basic"
-          label="Search "
-          variant="outlined"
-          placeholder='Search...'
-          size='small'
-          sx={{
-            minWidth: "120px",
-            '& input ': {
-              color: 'gray',
-            }
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ color: 'primary.main' }} />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <AutoCompleteSearchBoard />
 
         <ModalSelect />
 

@@ -195,7 +195,7 @@ const pullOrderColummIds = async (column) => {
   }
 }
 
-const getBoards = async (userId, page, itemsPerPage) => {
+const getBoards = async (userId, page, itemsPerPage, queryFilter) => {
   try {
     const queryCondtion = [
       // condition 1 : board is not deleted
@@ -209,6 +209,12 @@ const getBoards = async (userId, page, itemsPerPage) => {
         ]
       }
     ]
+
+    if (queryFilter) {
+      Object.keys(queryFilter).forEach((fieldName) => {
+        queryCondtion.push({ [fieldName]: { $regex: new RegExp(queryFilter[fieldName], 'i') } })
+      })
+    }
     const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate(
       [
         { $match: { $and: queryCondtion } },

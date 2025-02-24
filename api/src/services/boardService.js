@@ -73,14 +73,14 @@ const moveCardToDifferentColumn = async (data) => {
   }
 }
 
-const getBoards = async (userId, page, itemsPerPage) => {
+const getBoards = async (userId, page, itemsPerPage, queryFilter) => {
   try {
     if (!page) page = DEFAULT_PAGE
 
     if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE
 
     //tranform page and itemsPerPage to number
-    const boards = await boardModal.getBoards(userId, parseInt(page), parseInt(itemsPerPage))
+    const boards = await boardModal.getBoards(userId, parseInt(page), parseInt(itemsPerPage), queryFilter)
     return boards
   } catch (error) {
     throw new Error(error)
