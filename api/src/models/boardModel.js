@@ -161,13 +161,17 @@ const update = async (boardId, updatedData) => {
     if (updatedData.columnOrderIds && updatedData.columnOrderIds.length > 0) {
       updatedData.columnOrderIds = updatedData.columnOrderIds.map(id => new ObjectId(id))
     }
+
+    //remove member from board
     if (updatedData.action == 'REMOVE') {
       result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
         { _id: new ObjectId(boardId) },
         { $pull: { memberIds: new ObjectId(updatedData.userId) } },
         { returnDocument: 'after' }
       )
-    } else {
+    }
+    // update data
+    else {
       result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
         { _id: new ObjectId(boardId) },
         { $set: updatedData },
@@ -188,7 +192,7 @@ const pullOrderColummIds = async (column) => {
       { $pull: { columnOrderIds: new ObjectId(column._id) } },
       { returnDocument: 'after' }
     )
-    //mongo db 6.0 return result
+
     return result.value
   } catch (error) {
     throw new Error(error)

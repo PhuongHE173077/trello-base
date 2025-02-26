@@ -24,22 +24,26 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 
+import { Popover } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import { DateCalendar } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import { updateCardDetailsAPI } from '~/apis'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
+import { updatedCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { clearCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { CARD_MEMBER_ACTION } from '~/Utils/constants'
+import { singleFileValidator } from '~/Utils/validators'
 import CardActivitySection from './CardActivitySection'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
 import CardUserGroup from './CardUserGroup'
-
-
-import { styled } from '@mui/material/styles'
-import { useDispatch, useSelector } from 'react-redux'
-import { updateCardDetailsAPI } from '~/apis'
-import { updatedCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
-import { clearCard, selectCurrentActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
-import { singleFileValidator } from '~/Utils/validators'
-import { selectCurrentUser } from '~/redux/user/userSlice'
-import { CARD_MEMBER_ACTION } from '~/Utils/constants'
+import dayjs from 'dayjs'
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -62,6 +66,26 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 
 
 function ActiveCard() {
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
+    console.log("Selected Date:", newDate.format("YYYY-MM-DD"));
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   const dispath = useDispatch()
 
@@ -229,10 +253,28 @@ function ActiveCard() {
               <SidebarItem><AttachFileOutlinedIcon fontSize="small" />Attachment</SidebarItem>
               <SidebarItem><LocalOfferOutlinedIcon fontSize="small" />Labels</SidebarItem>
               <SidebarItem><TaskAltOutlinedIcon fontSize="small" />Checklist</SidebarItem>
-              <SidebarItem><WatchLaterOutlinedIcon fontSize="small" />Dates</SidebarItem>
+              <SidebarItem onClick={handleClick}><WatchLaterOutlinedIcon fontSize="small" />Dates</SidebarItem>
               <SidebarItem><AutoFixHighOutlinedIcon fontSize="small" />Custom Fields</SidebarItem>
             </Stack>
 
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+            >
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar value={selectedDate} onChange={handleDateChange} />
+                <p>Start Date:{dayjs().format("YYYY-MM-DD")}</p>
+                <p>Due Date: {selectedDate.format("YYYY-MM-DD")}</p>
+              </LocalizationProvider>
+
+            </Popover>
             <Divider sx={{ my: 2 }} />
 
             <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Power-Ups</Typography>
