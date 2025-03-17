@@ -47,8 +47,8 @@ function CardUserGroup({ cardMemberIds = [], onUpdateCard }) {
         <Tooltip title={user.displayName} key={index}>
           <Avatar
             sx={{ width: 34, height: 34, cursor: 'pointer' }}
-            alt={user.displayName}
-            src={user.avatar}
+            alt={user?.displayName}
+            src={user?.avatar}
           />
         </Tooltip>
       )}
@@ -89,7 +89,7 @@ function CardUserGroup({ cardMemberIds = [], onUpdateCard }) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <Box sx={{ p: 2, maxWidth: '260px', display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-          {currentBoard.fnMembers.map((user, index) =>
+          {currentBoard?.fnMembers?.map((user, index) =>
             <Tooltip title={user.displayName} key={index} >
               <Badge
                 sx={{ cursor: 'pointer' }}

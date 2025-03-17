@@ -36,3 +36,8 @@ export const CARD_MEMBER_ACTION = {
   ADD: 'ADD',
   REMOVE: 'REMOVE'
 }
+
+export const DUE_DATE_STATUS = {
+  OVERDUE: 'OVERDUE',
+  DONE: 'DONE'
+}

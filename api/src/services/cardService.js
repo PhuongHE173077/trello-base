@@ -24,7 +24,7 @@ const createNewCard = async (reqBody) => {
   }
 }
 
-const update = async (cardId, reqBody, cardCoverFile, userInfor) => {
+const update = async (cardId, reqBody, cardCoverFile, userInfor, cardDeleteDueDate) => {
   try {
 
     const updatedCard = {
@@ -48,6 +48,10 @@ const update = async (cardId, reqBody, cardCoverFile, userInfor) => {
     }
     else if (updatedCard.incomingMemberInfor) {
       getNewCard = await cardModal.updateMember(cardId, updatedCard.incomingMemberInfor)
+    }
+
+    else if (cardDeleteDueDate) {
+      getNewCard = await cardModal.deleteDueDate(cardId)
     }
 
     else {

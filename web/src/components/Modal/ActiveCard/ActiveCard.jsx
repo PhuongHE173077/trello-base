@@ -24,12 +24,12 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 
-import { Popover } from '@mui/material'
+import { Button, Popover } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { DateCalendar } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { updateCardDetailsAPI } from '~/apis'
@@ -44,6 +44,10 @@ import CardActivitySection from './CardActivitySection'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
 import CardUserGroup from './CardUserGroup'
 import dayjs from 'dayjs'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar';
+
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -69,7 +73,15 @@ function ActiveCard() {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [startDateUpdate, setStartDateUpdate] = useState(null)
+  const [endDateUpdate, setEndDateUpdate] = useState(null)
+
   const [selectedDate, setSelectedDate] = useState(dayjs());
+
+  useEffect(() => {
+    setStartDateUpdate(null)
+    setEndDateUpdate(null)
+  }, [])
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
@@ -138,6 +150,69 @@ function ActiveCard() {
     await callApiUpdateCard({ commentToAdd })
   }
 
+  const handleUpdateDate = async () => {
+    const dueDate = {
+      startDate: dayjs().format("YYYY-MM-DD"),
+      endDate: selectedDate.format("YYYY-MM-DD"),
+      status: false
+    }
+    await callApiUpdateCard({ dueDate })
+    handleClose()
+  }
+
+  const checkStatusDoing = (startDate, endDate) => {
+    const today = dayjs();
+
+    if (today.isBefore(dayjs(startDate))) {
+      return 'To Do';
+    } else if (
+      today.isSame(dayjs(startDate), 'day') ||
+      today.isSame(dayjs(endDate), 'day') ||
+      (today.isAfter(dayjs(startDate)) && today.isBefore(dayjs(endDate)))
+    ) {
+      return 'Doing';
+    } else if (today.isAfter(dayjs(endDate))) {
+      return 'Overdue';
+    }
+  }
+
+  const handleDateRangeChange = (newDate) => {
+    if (newDate[0] !== null && newDate[1] !== null) {
+      setStartDateUpdate(newDate[0].format("YYYY-MM-DD"))
+      setEndDateUpdate(newDate[1].format("YYYY-MM-DD"))
+    }
+  }
+
+  const handleUpdateChangeDate = async () => {
+    if (!startDateUpdate || !endDateUpdate) return
+    const dueDate = {
+      startDate: startDateUpdate,
+      endDate: endDateUpdate,
+      status: false
+    }
+
+    await callApiUpdateCard({ dueDate })
+
+    handleClose()
+  }
+
+
+  const handleRemoveDate = async () => {
+    const dueDate = {
+      startDate: startDateUpdate,
+      endDate: endDateUpdate,
+      status: false
+    }
+
+
+    await callApiUpdateCard({ dueDate, type: 'delete' })
+
+    handleClose()
+  }
+
+
+
+
   return (
     <Modal
       disableScrollLock
@@ -193,8 +268,51 @@ function ActiveCard() {
             <Box sx={{ mb: 3 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
 
-              {/* Feature 02: Xử lý các thành viên của Card */}
-              <CardUserGroup cardMemberIds={activeCard.memberIds} onUpdateCard={callApiUpdateCard} />
+              <Box display={'flex'} gap={5}>
+                {/* Feature 02: Xử lý các thành viên của Card */}
+                <CardUserGroup cardMemberIds={activeCard.memberIds} onUpdateCard={callApiUpdateCard} />
+                {activeCard?.dueDate && activeCard?.dueDate?.startDate && (
+                  <Button variant="contained"
+
+                    color={
+                      activeCard?.dueDate?.status ? 'success' :
+                        (checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate) === 'Doing' ? 'warning' :
+                          (checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate) === 'Overdue' ? 'error' : 'inherit'))}
+                  >{activeCard?.dueDate?.status ?
+                    <Typography style={{}}>Complete</Typography>
+                    :
+                    <Typography style={{
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>{checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate)}</Typography>
+
+                    }</Button>
+                )}
+              </Box>
+              {activeCard?.dueDate && activeCard?.dueDate?.startDate && (
+                <Box sx={{ mt: 2, cursor: 'pointer' }} onClick={handleClick}>
+                  <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Dates</Typography>
+                  <Typography sx={{ padding: '4px 8px', border: '1px solid #ccc', borderRadius: '4px', width: '40%', display: 'flex', justifyContent: 'space-between' }}>
+
+                    <Typography> {activeCard?.dueDate?.startDate} - {activeCard?.dueDate?.endDate}</Typography>
+
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                      {activeCard?.dueDate?.status ?
+                        <Typography style={{ color: 'green' }}>Complete</Typography>
+                        :
+                        <Typography style={{
+                          color: (checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate) === 'Doing' ? 'warning' :
+                            (checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate) === 'Overdue' ? 'error' : 'info')),
+                          fontWeight: '600',
+                          fontSize: '14px'
+                        }}>{checkStatusDoing(activeCard?.dueDate?.startDate, activeCard?.dueDate?.endDate)}</Typography>
+                      }
+                      <KeyboardArrowDownIcon fontSize='small' />
+                    </Box>
+
+                  </Typography>
+                </Box>)}
+
             </Box>
 
             <Box sx={{ mb: 3 }}>
@@ -229,18 +347,16 @@ function ActiveCard() {
             <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Add To Card</Typography>
             <Stack direction="column" spacing={1}>
               {/* Feature 05: Xử lý hành động bản thân user tự join vào card */}
-              {!activeCard.memberIds.includes(currentUser._id) &&
+              {!activeCard?.memberIds?.includes(currentUser._id) &&
                 <SidebarItem className="active" onClick={() => callApiUpdateCard({
                   incomingMemberInfor: {
                     userId: currentUser._id,
                     action: CARD_MEMBER_ACTION.ADD
                   }
-
                 })}>
                   <PersonOutlineOutlinedIcon fontSize="small" />
                   Join
                 </SidebarItem>
-
               }
 
               {/* Feature 06: Xử lý hành động cập nhật ảnh Cover của Card */}
@@ -266,13 +382,76 @@ function ActiveCard() {
                 vertical: 'center',
                 horizontal: 'left',
               }}
-            >
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateCalendar value={selectedDate} onChange={handleDateChange} />
-                <p>Start Date:{dayjs().format("YYYY-MM-DD")}</p>
-                <p>Due Date: {selectedDate.format("YYYY-MM-DD")}</p>
-              </LocalizationProvider>
+            >
+              {(!activeCard?.dueDate || !activeCard?.dueDate?.startDate) ?
+                <>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateCalendar value={selectedDate} onChange={handleDateChange} />
+                    <Box sx={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
+                      <Box>
+                        <p>Start Date:</p>
+                        {dayjs().format("YYYY-MM-DD")}
+                      </Box>
+                      <Box>
+                        <p>Due Date:</p>
+                        {selectedDate.format("YYYY-MM-DD")}
+                      </Box>
+                    </Box>
+
+
+                  </LocalizationProvider>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }} >
+                    <Button onClick={handleUpdateDate} variant='contained' sx={{
+                      width: '80%',
+                      '&:hover': {
+                        backgroundColor: '#e056fd'
+                      },
+                      marginBottom: '10px'
+                    }}>Save</Button>
+
+                  </Box >
+
+
+                </>
+                :
+                <Box mr={2}>
+
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateRangeCalendar', 'DateRangeCalendar']}>
+                      <DateRangeCalendar
+                        defaultValue={[dayjs(activeCard?.dueDate?.startDate), dayjs(activeCard?.dueDate?.endDate)]}
+                        onChange={handleDateRangeChange}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                    <Typography>  {startDateUpdate && endDateUpdate ? `Start Date: ${startDateUpdate} ` : `Start Date: ${activeCard?.dueDate?.startDate} `}</Typography>
+                    <Typography>  {startDateUpdate && endDateUpdate ? `-End Date: ${endDateUpdate}` : `-End Date: ${activeCard?.dueDate?.endDate}`}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
+                      <Button onClick={handleUpdateChangeDate} variant='contained' sx={{
+                        width: '100%',
+                        '&:hover': {
+                          backgroundColor: '#e056fd'
+                        }
+                      }}>Update</Button>
+                    </Box >
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <Button onClick={handleRemoveDate} variant='contained' sx={{
+                        width: '100%', '&:hover': {
+                          backgroundColor: '#e056fd'
+                        }
+                      }}>Remove</Button>
+                    </Box>
+                  </Box>
+
+
+                </Box>
+
+              }
 
             </Popover>
             <Divider sx={{ my: 2 }} />

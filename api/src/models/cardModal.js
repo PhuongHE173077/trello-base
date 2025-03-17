@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 import { GET_DB } from "~/config/mongodb"
-import { CARD_MEMBER_ACTION } from "~/utils/constants"
+import { CARD_MEMBER_ACTION, DUE_DATE_STATUS } from "~/utils/constants"
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "~/utils/validators"
 
 const Joi = require("joi")
@@ -26,6 +26,12 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
 
     createdAt: Joi.date().timestamp()
   }).default([]),
+
+  dueDate: Joi.object({
+    startDate: Joi.string(),
+    endDate: Joi.string(),
+    status: Joi.string()
+  }).optional(),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -121,6 +127,26 @@ const updateMember = async (cardId, updatedData) => {
 
 }
 
+const deleteDueDate = async (cardId) => {
+  try {
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      {
+        $unset: {
+          "dueDate.startDate": "",
+          "dueDate.endDate": "",
+          "dueDate.status": ""
+        }
+      },
+
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModal = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -129,5 +155,6 @@ export const cardModal = {
   update,
   deleteCardInColumn,
   unshiftNewComment,
-  updateMember
+  updateMember,
+  deleteDueDate
 }
