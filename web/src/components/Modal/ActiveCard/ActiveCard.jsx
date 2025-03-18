@@ -24,11 +24,15 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Button, Popover } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { DateCalendar } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
+import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar'
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -43,10 +47,6 @@ import { singleFileValidator } from '~/Utils/validators'
 import CardActivitySection from './CardActivitySection'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
 import CardUserGroup from './CardUserGroup'
-import dayjs from 'dayjs'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar';
 
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',

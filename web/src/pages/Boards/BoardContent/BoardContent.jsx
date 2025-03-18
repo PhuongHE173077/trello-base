@@ -276,20 +276,45 @@ export const BoardContent = ({
       sensors={sensors}
       collisionDetection={closestCorners}
     >
-      <Box
-        sx={{
-          height: (theme) => theme.trello.boardContentHeight,
-          backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1A2027' : '#66FFFF'),
-        }}
-      >
+      {board?.coverImage ?
+        <Box
+          sx={{
+            height: '87%',
+            backgroundImage: `url(${board?.coverImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <DragOverlay dropAnimation={dropAnimation}>
+            {!activeDragId && null}
+            {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
+            {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
+          </DragOverlay>
+          <ListColumn column={orderColumns} />
+        </Box>
 
-        <DragOverlay dropAnimation={dropAnimation}>
-          {!activeDragId && null}
-          {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
-          {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
-        </DragOverlay>
-        <ListColumn column={orderColumns} />
-      </Box >
+        :
+
+
+        <Box
+          sx={{
+            height: '87%',
+            backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1A2027' : '#66FFFF'),
+
+          }}
+        >
+
+          <DragOverlay dropAnimation={dropAnimation}>
+            {!activeDragId && null}
+            {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={data} />}
+            {(activeDragType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <TrelloCard card={data} />}
+          </DragOverlay>
+          <ListColumn column={orderColumns} />
+        </Box >
+
+      }
+
     </DndContext>
   )
 }

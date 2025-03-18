@@ -118,57 +118,58 @@ function Boards() {
                                 {boards.map(b =>
                                     <Grid xs={2} sm={3} md={4} key={b}>
                                         <Card sx={{ width: '250px' }}>
-                                            {/* <Box
-                        component={Link}
-                        to={'/boards/6534e1b8a235025a66b644a5'}
-                        sx={{
-                          height: '150px',
-                          backgroundImage: 'url(https://res.cloudinary.com/dl3ucqngx/image/upload/v1738847987/users/w1medkbqgpiqzbfszne3.jpg)', // Thay link ảnh của bạn ở đây
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          display: 'flex',
-                          textDecoration: 'none',
-                          color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
-                          transition: 'filter 0.3s ease-in-out, opacity 0.3s ease-in-out', // Hiệu ứng mượt mà
-                          filter: 'brightness(100%)', // Mặc định ảnh ở độ sáng bình thường
-                          '&:hover': {
-                            filter: 'brightness(120%)' // Khi hover, ảnh sáng lên 20%
-                          }
-                        }}
-                      >
-                        <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                          <Typography gutterBottom variant="h6" component="div">
-                            Board title
-                          </Typography>
-                        </CardContent>
-                      </Box> */}
+                                            {b?.coverImage ?
+                                                <Box
+                                                    component={Link}
+                                                    to={`/boards/${b._id}`}
+                                                    sx={{
+                                                        height: '150px',
+                                                        backgroundImage: `url(${b?.coverImage})`,
+                                                        backgroundSize: 'cover',
+                                                        backgroundPosition: 'center',
+                                                        display: 'flex',
+                                                        textDecoration: 'none',
+                                                        color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
+                                                        transition: 'filter 0.3s ease-in-out, opacity 0.3s ease-in-out',
+                                                        filter: 'brightness(100%)',
+                                                        '&:hover': {
+                                                            filter: 'brightness(120%)'
+                                                        }
+                                                    }}
+                                                >
+                                                    <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
+                                                        <Typography gutterBottom variant="h6" component="div">
+                                                            {b?.title}
+                                                        </Typography>
+                                                    </CardContent>
+                                                </Box>
+                                                :
+                                                <Box
+                                                    component={Link}
+                                                    to={`/boards/${b._id}`}
+                                                    sx={{
+                                                        height: '150px',
+                                                        backgroundColor: `${randomColor()}B3`,
+                                                        border: `1px solid ${randomColor()}`,
+                                                        borderRadius: '8px',
+                                                        display: 'flex',
+                                                        textDecoration: 'none',
+                                                        color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
+                                                        transition: 'background-color 0.3s ease-in-out',
+                                                        '&:hover': {
+                                                            backgroundColor: (theme) =>
+                                                                theme.palette.mode === 'dark' ? '#1A2027' : 'rgba(0, 0, 0, 0.1)'
+                                                        }
+                                                    }}
+                                                >
+                                                    <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
+                                                        <Typography gutterBottom variant="h6" component="div">
+                                                            {b.title}
+                                                        </Typography>
+                                                    </CardContent>
+                                                </Box>
 
-
-                                            <Box
-                                                component={Link}
-                                                to={`/boards/${b._id}`}
-                                                sx={{
-                                                    height: '150px',
-                                                    backgroundColor: randomColor(),
-                                                    display: 'flex',
-                                                    textDecoration: 'none',
-                                                    color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
-                                                    transition: 'background-color 0.3s ease-in-out',
-                                                    '&:hover': {
-                                                        backgroundColor: (theme) =>
-                                                            theme.palette.mode === 'dark' ? '#1A2027' : 'rgba(0, 0, 0, 0.1)'
-                                                    }
-                                                }}
-                                            >
-                                                <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                                                    <Typography gutterBottom variant="h6" component="div">
-                                                        {b.title}
-                                                    </Typography>
-                                                </CardContent>
-                                            </Box>
-
-
-
+                                            }
 
                                         </Card>
                                     </Grid>

@@ -8,6 +8,7 @@ import BoardUserGroup from './BoardUserGroup';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useState } from 'react';
 import CustomizedDialogs from '~/components/Modal/Dialog/CustomizedDialogs';
+import MoreOption_2 from './MoreOption';
 
 const MENU_STYLE = {
   '&:hover': {
@@ -88,8 +89,9 @@ export const BoardBar = ({ mocData }) => {
               startIcon={<PersonAddIcon />}
             >Share</Button>
           </Tooltip>
-
         </Box>
+
+        <MoreOption_2 />
       </Box>
       <CustomizedDialogs open={open} setOpen={setOpen} />
     </Box>
