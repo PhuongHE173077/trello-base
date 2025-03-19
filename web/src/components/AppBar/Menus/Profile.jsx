@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { logoutUserAPI, selectCurrentUser } from '~/redux/user/userSlice';
+import UpgradeIcon from '@mui/icons-material/Upgrade';
 
 
 export default function Profile() {
@@ -57,8 +58,6 @@ export default function Profile() {
           <IconButton
             onClick={handleClick}
             size="small"
-
-
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
@@ -104,7 +103,7 @@ export default function Profile() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link to={'/settings/account'} style={{ color: 'inherit' }}>
+        <Link to={'/settings/account'} style={{ color: 'inherit', textDecoration: 'none' }}>
           <MenuItem onClick={handleClose}
             sx={{
               '&:hover': {
@@ -118,6 +117,13 @@ export default function Profile() {
 
 
         <Divider />
+
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <UpgradeIcon fontSize="small" />
+          </ListItemIcon>
+          Upgrade Account
+        </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />

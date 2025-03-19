@@ -9,6 +9,9 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useState } from 'react';
 import CustomizedDialogs from '~/components/Modal/Dialog/CustomizedDialogs';
 import MoreOption_2 from './MoreOption';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFavorite, updateFavAPIs } from '~/redux/favorite/favoriteSlice';
+import StarIcon from '@mui/icons-material/Star';
 
 const MENU_STYLE = {
   '&:hover': {
@@ -22,6 +25,11 @@ const MENU_STYLE = {
 }
 export const BoardBar = ({ mocData }) => {
   const [open, setOpen] = useState(false);
+  const favorites = useSelector(selectFavorite)
+  const dispath = useDispatch()
+  const handleStar = async (boardId) => {
+    dispath(updateFavAPIs({ boardId }))
+  }
   return (
     <Box
       sx={{
@@ -37,9 +45,13 @@ export const BoardBar = ({ mocData }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <Typography variant='h6' sx={MENU_STYLE}>{mocData?.title}</Typography>
 
-        <Tooltip title="Click to star or un star this board. Starred boards show up at the top of your boards list.">
+        <Tooltip title="Click to star or un star this board. Starred boards show up at the top of your boards list." onClick={() => handleStar(mocData?._id)}>
           <IconButton>
-            <StarBorderIcon />
+            {favorites?.favoriteBoards?.find(f => f._id === mocData._id) ?
+              <StarIcon />
+              :
+              <StarBorderIcon />
+            }
           </IconButton>
         </Tooltip>
 

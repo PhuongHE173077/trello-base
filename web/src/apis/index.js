@@ -69,3 +69,4 @@ export const refreshTokenAPI = async () => {
 export const createNewInvitationAPI = async (data) => {
   return await axios.post(`v1/invitations/board`, data)
 }
+

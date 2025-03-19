@@ -41,3 +41,8 @@ export const DUE_DATE_STATUS = {
   OVERDUE: 'OVERDUE',
   DONE: 'DONE'
 }
+
+export const FAVORITE_UPDATE_STATUS = {
+  PUSH: 'PUSH',
+  PULL: "PULL"
+}

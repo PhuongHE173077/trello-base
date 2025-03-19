@@ -12,17 +12,18 @@ import Pagination from '@mui/material/Pagination'
 import PaginationItem from '@mui/material/PaginationItem'
 import Stack from '@mui/material/Stack'
 import Grid from '@mui/material/Unstable_Grid2'
-
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Link, useLocation } from 'react-router-dom'
 import SidebarCreateBoardModal from './create'
-
-
 import { styled } from '@mui/material/styles'
 import { AppBar } from '~/components/AppBar'
 import { fetchBoardsAPI } from '~/apis'
 import { DEFAULT_ITEMS_PER_PAGE } from '~/Utils/constants'
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, IconButton, Tooltip } from '@mui/material'
 import randomColor from 'randomcolor'
+import { selectFavorite, updateFavAPIs } from '~/redux/favorite/favoriteSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import StarIcon from '@mui/icons-material/Star';
 
 const SidebarItem = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -46,9 +47,11 @@ function Boards() {
     const [boards, setBoards] = useState([])
     const [totalBoards, setTotalBoards] = useState(null)
 
+    const favorites = useSelector(selectFavorite)
 
     const location = useLocation()
 
+    const dispath = useDispatch()
 
     const query = new URLSearchParams(location.search)
 
@@ -77,6 +80,9 @@ function Boards() {
     if (!boards) {
         return <CircularProgress />
 
+    }
+    const handleStar = async (boardId) => {
+        dispath(updateFavAPIs({ boardId }))
     }
 
 
@@ -120,54 +126,107 @@ function Boards() {
                                         <Card sx={{ width: '250px' }}>
                                             {b?.coverImage ?
                                                 <Box
-                                                    component={Link}
-                                                    to={`/boards/${b._id}`}
                                                     sx={{
-                                                        height: '150px',
-                                                        backgroundImage: `url(${b?.coverImage})`,
-                                                        backgroundSize: 'cover',
-                                                        backgroundPosition: 'center',
-                                                        display: 'flex',
-                                                        textDecoration: 'none',
-                                                        color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
-                                                        transition: 'filter 0.3s ease-in-out, opacity 0.3s ease-in-out',
-                                                        filter: 'brightness(100%)',
-                                                        '&:hover': {
-                                                            filter: 'brightness(120%)'
-                                                        }
+                                                        position: 'relative',
                                                     }}
                                                 >
-                                                    <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                                                        <Typography gutterBottom variant="h6" component="div">
-                                                            {b?.title}
-                                                        </Typography>
-                                                    </CardContent>
+
+                                                    <Box
+                                                        component={Link}
+                                                        to={`/boards/${b._id}`}
+                                                        sx={{
+                                                            height: '150px',
+                                                            backgroundImage: `url(${b?.coverImage})`,
+                                                            backgroundSize: 'cover',
+                                                            backgroundPosition: 'center',
+
+                                                            display: 'flex',
+                                                            textDecoration: 'none',
+                                                            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
+                                                            transition: 'filter 0.3s ease-in-out, opacity 0.3s ease-in-out',
+                                                            filter: 'brightness(100%)',
+                                                            '&:hover': {
+                                                                filter: 'brightness(120%)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
+                                                            <Typography gutterBottom variant="h6" component="div">
+                                                                {b?.title}
+                                                            </Typography>
+                                                        </CardContent>
+
+                                                    </Box>
+                                                    <Tooltip
+                                                        onClick={() => handleStar(b._id)}
+                                                        title='star'
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            bottom: 5,
+                                                            right: 5,
+                                                        }}
+                                                    >
+                                                        <IconButton>
+                                                            {favorites?.favoriteBoards?.find(f => f._id === b._id) ?
+                                                                <StarIcon />
+                                                                :
+                                                                <StarBorderIcon />
+                                                            }
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </Box>
+
                                                 :
+
                                                 <Box
-                                                    component={Link}
-                                                    to={`/boards/${b._id}`}
                                                     sx={{
-                                                        height: '150px',
-                                                        backgroundColor: `${randomColor()}B3`,
-                                                        border: `1px solid ${randomColor()}`,
-                                                        borderRadius: '8px',
-                                                        display: 'flex',
-                                                        textDecoration: 'none',
-                                                        color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
-                                                        transition: 'background-color 0.3s ease-in-out',
-                                                        '&:hover': {
-                                                            backgroundColor: (theme) =>
-                                                                theme.palette.mode === 'dark' ? '#1A2027' : 'rgba(0, 0, 0, 0.1)'
-                                                        }
+                                                        position: 'relative',
                                                     }}
                                                 >
-                                                    <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                                                        <Typography gutterBottom variant="h6" component="div">
-                                                            {b.title}
-                                                        </Typography>
-                                                    </CardContent>
+
+                                                    <Box
+                                                        component={Link}
+                                                        to={`/boards/${b._id}`}
+                                                        sx={{
+                                                            height: '150px',
+                                                            backgroundColor: `${randomColor()}B3`,
+                                                            border: `1px solid ${randomColor()}`,
+                                                            borderRadius: '8px',
+                                                            display: 'flex',
+                                                            textDecoration: 'none',
+                                                            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#000'),
+                                                            transition: 'background-color 0.3s ease-in-out',
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) =>
+                                                                    theme.palette.mode === 'dark' ? '#1A2027' : 'rgba(0, 0, 0, 0.1)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
+                                                            <Typography gutterBottom variant="h6" component="div">
+                                                                {b.title}
+                                                            </Typography>
+                                                        </CardContent>
+                                                    </Box>
+                                                    <Tooltip
+                                                        onClick={() => handleStar(b._id)}
+                                                        title='star'
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            bottom: 5,
+                                                            right: 5,
+                                                        }}
+                                                    >
+                                                        <IconButton>
+                                                            {favorites?.favoriteBoards?.find(f => f._id === b._id) ?
+                                                                <StarIcon />
+                                                                :
+                                                                <StarBorderIcon />
+                                                            }
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </Box>
+
 
                                             }
 
